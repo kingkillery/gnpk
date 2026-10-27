@@ -87,7 +87,7 @@ function terminatePiProcess(
 function buildPiPrompt(prompt: string, schema: AgentOutputSchema): string {
   return `${prompt}
 
-## gnhf final output contract
+## gnpk final output contract
 
 When the iteration is complete, your final assistant response must be only valid JSON matching this JSON Schema. Do not wrap it in Markdown fences. Do not include prose before or after the JSON object.
 

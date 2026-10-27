@@ -39,16 +39,16 @@ const TEST_REDACT_AGENT_SPEC = (name: string) => {
 
 const stubRunInfo: RunInfo = {
   runId: "run-abc",
-  runDir: "/repo/.gnhf/runs/run-abc",
-  promptPath: "/repo/.gnhf/runs/run-abc/PROMPT.md",
-  notesPath: "/repo/.gnhf/runs/run-abc/notes.md",
-  schemaPath: "/repo/.gnhf/runs/run-abc/schema.json",
-  logPath: "/repo/.gnhf/runs/run-abc/gnhf.log",
+  runDir: "/repo/.gnpk/runs/run-abc",
+  promptPath: "/repo/.gnpk/runs/run-abc/PROMPT.md",
+  notesPath: "/repo/.gnpk/runs/run-abc/notes.md",
+  schemaPath: "/repo/.gnpk/runs/run-abc/schema.json",
+  logPath: "/repo/.gnpk/runs/run-abc/gnpk.log",
   baseCommit: "abc123",
-  baseCommitPath: "/repo/.gnhf/runs/run-abc/base-commit",
-  stopWhenPath: "/repo/.gnhf/runs/run-abc/stop-when",
+  baseCommitPath: "/repo/.gnpk/runs/run-abc/base-commit",
+  stopWhenPath: "/repo/.gnpk/runs/run-abc/stop-when",
   stopWhen: undefined,
-  commitMessagePath: "/repo/.gnhf/runs/run-abc/commit-message",
+  commitMessagePath: "/repo/.gnpk/runs/run-abc/commit-message",
   commitMessage: undefined,
 };
 
@@ -209,6 +209,7 @@ async function runCliWithMocks(
       })),
   }));
   vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
     setupRun,
     peekRunMetadata,
     resumeRun,
@@ -415,6 +416,7 @@ async function runSigintCliTest({
     getCurrentBranch: vi.fn(() => "main"),
   }));
   vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
     setupRun: vi.fn(() => stubRunInfo),
     peekRunMetadata: vi.fn(() => stubRunInfo),
     resumeRun: vi.fn(),
@@ -528,7 +530,7 @@ async function runCliResumeWithActualRun(
   }) as typeof process.exit);
 
   const tempDir = mkdtempSync(join(tmpdir(), "gnhf-cli-resume-test-"));
-  const runDir = join(tempDir, ".gnhf", "runs", "existing-run");
+  const runDir = join(tempDir, ".gnpk", "runs", "existing-run");
   const promptPath = join(runDir, "prompt.md");
   const baseCommitPath = join(runDir, "base-commit");
   const stopWhenPath = join(runDir, "stop-when");
@@ -576,7 +578,7 @@ async function runCliResumeWithActualRun(
     ensureCleanWorkingTree: vi.fn(),
     createBranch: vi.fn(),
     getHeadCommit: vi.fn(() => "abc123"),
-    getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+    getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     getRepoRootDir: vi.fn(() => tempDir),
     createWorktree: vi.fn(),
     removeWorktree: vi.fn(),
@@ -822,7 +824,7 @@ describe("cli", () => {
         getCurrentBranch: vi
           .fn()
           .mockReturnValueOnce("main")
-          .mockReturnValue("gnhf/refactor-auth-flow"),
+          .mockReturnValue("gnpk/refactor-auth-flow"),
         orchestratorGetState: vi.fn(() => ({
           status: "stopped" as const,
           gracefulStopRequested: false,
@@ -845,9 +847,9 @@ describe("cli", () => {
     );
 
     const stdout = stdoutWriteCalls.map(([chunk]) => String(chunk)).join("");
-    expect(stdout).toContain("gnhf wrapped");
+    expect(stdout).toContain("gnpk wrapped");
     expect(stdout).toContain(
-      "opencode worked for 47m 12s on gnhf/refactor-auth-flow",
+      "opencode worked for 47m 12s on gnpk/refactor-auth-flow",
     );
     expect(stdout).toContain("branch diff");
     expect(stdout).toContain("6 commits");
@@ -879,7 +881,7 @@ describe("cli", () => {
     );
     expect(telemetry.close).toHaveBeenCalledWith(1_000);
     expect(stdoutWriteCalls.map(([chunk]) => String(chunk)).join("")).toContain(
-      "gnhf wrapped",
+      "gnpk wrapped",
     );
     expect(appendDebugLog).toHaveBeenCalledWith(
       "run:end-state-error",
@@ -1387,7 +1389,7 @@ describe("cli", () => {
     const getLastIterationNumber = vi.fn(() => 2);
     const getCompletedIterationCount = vi.fn(() => 1);
 
-    mkdirSync(join(tempDir, ".gnhf", "runs", runId), {
+    mkdirSync(join(tempDir, ".gnpk", "runs", runId), {
       recursive: true,
     });
     process.chdir(tempDir);
@@ -1441,7 +1443,7 @@ describe("cli", () => {
       runId,
     }));
 
-    mkdirSync(join(tempDir, ".gnhf", "runs", runId), {
+    mkdirSync(join(tempDir, ".gnpk", "runs", runId), {
       recursive: true,
     });
     process.chdir(tempDir);
@@ -1880,6 +1882,7 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -2029,9 +2032,10 @@ describe("cli", () => {
       ensureCleanWorkingTree: vi.fn(),
       createBranch: vi.fn(),
       getHeadCommit: vi.fn(() => "abc123"),
-      getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+      getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2169,9 +2173,10 @@ describe("cli", () => {
       ensureCleanWorkingTree: vi.fn(),
       createBranch: vi.fn(),
       getHeadCommit: vi.fn(() => "abc123"),
-      getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+      getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2305,9 +2310,10 @@ describe("cli", () => {
       ensureCleanWorkingTree: vi.fn(),
       createBranch: vi.fn(),
       getHeadCommit: vi.fn(() => "abc123"),
-      getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+      getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2436,9 +2442,10 @@ describe("cli", () => {
       ensureCleanWorkingTree: vi.fn(),
       createBranch: vi.fn(),
       getHeadCommit: vi.fn(() => "abc123"),
-      getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+      getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2564,9 +2571,10 @@ describe("cli", () => {
       ensureCleanWorkingTree: vi.fn(),
       createBranch: vi.fn(),
       getHeadCommit: vi.fn(() => "abc123"),
-      getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+      getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2690,12 +2698,13 @@ describe("cli", () => {
       ensureCleanWorkingTree: vi.fn(),
       createBranch: vi.fn(),
       getHeadCommit: vi.fn(() => "abc123"),
-      getCurrentBranch: vi.fn(() => "gnhf/existing-run"),
+      getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
       getRepoRootDir: vi.fn(() => "/repo"),
       createWorktree: vi.fn(),
       removeWorktree: vi.fn(),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun,
       peekRunMetadata,
       resumeRun,
@@ -2872,6 +2881,7 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3022,6 +3032,7 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3080,7 +3091,7 @@ describe("cli", () => {
 
       expect(exitSpy).toHaveBeenCalledWith(130);
       expect(consoleError).toHaveBeenCalledWith(
-        `\n  gnhf: Run log: ${stubRunInfo.logPath}\n`,
+        `\n  gnpk: Run log: ${stubRunInfo.logPath}\n`,
       );
     } finally {
       process.argv = originalArgv;
@@ -3136,7 +3147,7 @@ describe("cli", () => {
           consecutiveErrors: 0,
           startTime: new Date("2026-01-01T00:00:00Z"),
           waitingUntil: null,
-          lastMessage: "claude credit balance too low - see gnhf.log",
+          lastMessage: "claude credit balance too low - see gnpk.log",
           lastAgentError:
             "claude exited with code 1: Credit balance is too low",
         })),
@@ -3144,7 +3155,7 @@ describe("cli", () => {
     );
 
     expect(consoleErrorCalls).toContainEqual([
-      `\n  gnhf: Run log: ${stubRunInfo.logPath}\n`,
+      `\n  gnpk: Run log: ${stubRunInfo.logPath}\n`,
     ]);
   });
 
@@ -3200,6 +3211,7 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3356,6 +3368,7 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
+    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3650,10 +3663,10 @@ describe("cli", () => {
       .slice(0, 6);
     const runId = `ship-it-${hash}`;
     const suffixedRunId = `${runId}-1`;
-    const suffixedBranch = `gnhf/${suffixedRunId}`;
-    const worktreeRoot = join(tempDir, "repo-gnhf-worktrees");
+    const suffixedBranch = `gnpk/${suffixedRunId}`;
+    const worktreeRoot = join(tempDir, "repo-gnpk-worktrees");
     const suffixedWorktreePath = join(worktreeRoot, suffixedRunId);
-    mkdirSync(join(suffixedWorktreePath, ".gnhf", "runs", suffixedRunId), {
+    mkdirSync(join(suffixedWorktreePath, ".gnpk", "runs", suffixedRunId), {
       recursive: true,
     });
 
@@ -3666,7 +3679,7 @@ describe("cli", () => {
     const resumeRun = vi.fn(() => ({
       ...stubRunInfo,
       runId: suffixedRunId,
-      runDir: join(suffixedWorktreePath, ".gnhf", "runs", suffixedRunId),
+      runDir: join(suffixedWorktreePath, ".gnpk", "runs", suffixedRunId),
     }));
 
     try {
@@ -3712,17 +3725,17 @@ describe("cli", () => {
       .digest("hex")
       .slice(0, 6);
     const runId = `ship-it-${hash}`;
-    const branch = `gnhf/${runId}`;
-    const worktreeRoot = join(tempDir, "repo-gnhf-worktrees");
+    const branch = `gnpk/${runId}`;
+    const worktreeRoot = join(tempDir, "repo-gnpk-worktrees");
     const worktreePath = join(worktreeRoot, runId);
-    mkdirSync(join(worktreePath, ".gnhf", "runs", runId), {
+    mkdirSync(join(worktreePath, ".gnpk", "runs", runId), {
       recursive: true,
     });
 
     const resumeRun = vi.fn(() => ({
       ...stubRunInfo,
       runId,
-      runDir: join(worktreePath, ".gnhf", "runs", runId),
+      runDir: join(worktreePath, ".gnpk", "runs", runId),
       stopWhen: undefined,
     }));
 
@@ -3776,10 +3789,10 @@ describe("cli", () => {
       .slice(0, 6);
     const runId = `ship-it-${hash}`;
     const suffixedRunId = `${runId}-1`;
-    const suffixedBranch = `gnhf/${suffixedRunId}`;
-    const worktreeRoot = join(tempDir, "repo-gnhf-worktrees");
+    const suffixedBranch = `gnpk/${suffixedRunId}`;
+    const worktreeRoot = join(tempDir, "repo-gnpk-worktrees");
     const suffixedWorktreePath = join(worktreeRoot, suffixedRunId);
-    mkdirSync(join(suffixedWorktreePath, ".gnhf", "runs", suffixedRunId), {
+    mkdirSync(join(suffixedWorktreePath, ".gnpk", "runs", suffixedRunId), {
       recursive: true,
     });
 
@@ -3789,7 +3802,7 @@ describe("cli", () => {
     const resumeRun = vi.fn(() => ({
       ...stubRunInfo,
       runId: suffixedRunId,
-      runDir: join(suffixedWorktreePath, ".gnhf", "runs", suffixedRunId),
+      runDir: join(suffixedWorktreePath, ".gnpk", "runs", suffixedRunId),
     }));
 
     try {
@@ -3835,17 +3848,17 @@ describe("cli", () => {
       .digest("hex")
       .slice(0, 6);
     const runId = `ship-it-${hash}`;
-    const branch = `gnhf/${runId}`;
-    const worktreeRoot = join(tempDir, "repo-gnhf-worktrees");
+    const branch = `gnpk/${runId}`;
+    const worktreeRoot = join(tempDir, "repo-gnpk-worktrees");
     const worktreePath = join(worktreeRoot, runId);
-    mkdirSync(join(worktreePath, ".gnhf", "runs", runId), {
+    mkdirSync(join(worktreePath, ".gnpk", "runs", runId), {
       recursive: true,
     });
 
     const resumeRun = vi.fn(() => ({
       ...stubRunInfo,
       runId,
-      runDir: join(worktreePath, ".gnhf", "runs", runId),
+      runDir: join(worktreePath, ".gnpk", "runs", runId),
       commitMessage: undefined,
     }));
 

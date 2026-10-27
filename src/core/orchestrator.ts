@@ -1,5 +1,5 @@
 import { EventEmitter } from "node:events";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import {
   PermanentAgentError,
   RateLimitAgentError,
@@ -334,6 +334,7 @@ export class Orchestrator extends EventEmitter<OrchestratorEvents> {
         const baseIterationPrompt = buildIterationPrompt({
           n: this.state.currentIteration,
           runId: this.runInfo.runId,
+          runDir: relative(this.cwd, this.runInfo.runDir).replace(/\\/g, "/"),
           prompt: this.prompt,
           stopWhen: this.limits.stopWhen,
           commitMessage: this.config.commitMessage,

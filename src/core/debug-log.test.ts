@@ -31,7 +31,7 @@ describe("debug-log", () => {
   beforeEach(() => {
     resetDebugLogForTests();
     tempDir = mkdtempSync(join(tmpdir(), "gnhf-debug-log-test-"));
-    logPath = join(tempDir, "gnhf.log");
+    logPath = join(tempDir, "gnpk.log");
   });
 
   afterEach(() => {
@@ -53,7 +53,7 @@ describe("debug-log", () => {
   });
 
   it("creates the parent directory if missing", () => {
-    const nestedLogPath = join(tempDir, "nested", "deeper", "gnhf.log");
+    const nestedLogPath = join(tempDir, "nested", "deeper", "gnpk.log");
     initDebugLog(nestedLogPath);
     appendDebugLog("run:start");
     expect(readLines(nestedLogPath)).toHaveLength(1);
@@ -108,7 +108,7 @@ describe("debug-log", () => {
     // so mkdirSync recursive fails with ENOTDIR / EEXIST.
     const blockingFile = join(tempDir, "block");
     writeFileSync(blockingFile, "not a directory");
-    const doomedLogPath = join(blockingFile, "child", "gnhf.log");
+    const doomedLogPath = join(blockingFile, "child", "gnpk.log");
 
     expect(() => initDebugLog(doomedLogPath)).not.toThrow();
     expect(() => appendDebugLog("run:start")).not.toThrow();

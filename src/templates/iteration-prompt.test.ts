@@ -18,7 +18,7 @@ describe("buildIterationPrompt", () => {
       runId: "my-run-abc",
       prompt: "do stuff",
     });
-    expect(result).toContain(".gnhf/runs/my-run-abc/notes.md");
+    expect(result).toContain(".gnpk/runs/my-run-abc/notes.md");
   });
 
   it("includes the objective prompt at the end", () => {
@@ -38,7 +38,7 @@ describe("buildIterationPrompt", () => {
       runId: "run-1",
       prompt: "test",
     });
-    expect(result).toContain("Read .gnhf/runs/");
+    expect(result).toContain("Read .gnpk/runs/");
     expect(result).toContain("smallest logical unit");
   });
 

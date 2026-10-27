@@ -7,13 +7,14 @@ vi.mock("node:fs", () => ({
   readFileSync: vi.fn(),
   mkdirSync: vi.fn(),
   writeFileSync: vi.fn(),
+  existsSync: vi.fn(() => false),
 }));
 
 vi.mock("node:os", () => ({
   homedir: vi.fn(() => "/mock-home"),
 }));
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { isAgentSpec, loadConfig } from "./config.js";
 
 const mockMkdirSync = vi.mocked(mkdirSync);
@@ -21,7 +22,7 @@ const mockReadFileSync = vi.mocked(readFileSync);
 const mockWriteFileSync = vi.mocked(writeFileSync);
 
 const HOME = "/mock-home";
-const CONFIG_DIR = join(HOME, ".gnhf");
+const CONFIG_DIR = join(HOME, ".gnpk");
 const CONFIG_PATH = join(CONFIG_DIR, "config.yml");
 // Golden copy of the bootstrap template written on first run. Read via
 // node:fs/promises because node:fs is mocked in this file. README's
@@ -39,6 +40,15 @@ const BOOTSTRAP_CONFIG_TEMPLATE = (agent: string) =>
 describe("loadConfig", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(existsSync).mockReturnValue(false);
+  });
+
+  it("reads a legacy GNHF configuration when no GNPK configuration exists", () => {
+    const legacy = join(HOME, ".gnhf", "config.yml");
+    vi.mocked(existsSync).mockImplementation((path) => String(path) === legacy);
+    mockReadFileSync.mockReturnValue("agent: pi\n");
+    expect(loadConfig().agent).toBe("pi");
+    expect(mockReadFileSync).toHaveBeenCalledWith(legacy, "utf-8");
   });
 
   it("returns defaults when config file does not exist", () => {
@@ -175,7 +185,7 @@ describe("loadConfig", () => {
     });
   });
 
-  it("reads config from ~/.gnhf/config.yml", () => {
+  it("reads config from ~/.gnpk/config.yml", () => {
     mockReadFileSync.mockReturnValue("agent: codex\n");
 
     const config = loadConfig();
@@ -441,7 +451,7 @@ describe("loadConfig", () => {
     );
 
     expect(() => loadConfig()).toThrow(
-      /agentArgsOverride\.pi\[0\].*managed by gnhf/,
+      /agentArgsOverride\.pi\[0\].*managed by gnpk/,
     );
   });
 
@@ -563,7 +573,7 @@ describe("loadConfig", () => {
       );
 
       expect(() => loadConfig()).toThrow(
-        /agentArgsOverride\.cursor\[0\].*managed by gnhf/,
+        /agentArgsOverride\.cursor\[0\].*managed by gnpk/,
       );
     },
   );

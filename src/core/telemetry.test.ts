@@ -153,7 +153,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.2.3",
       platform: "darwin",
       arch: "arm64",
@@ -168,7 +168,7 @@ describe("TelemetryClient", () => {
     expect(req.url).toBe("https://a.example.com/api/send");
     expect(req.method).toBe("POST");
     expect(req.headers["Content-Type"]).toBe("application/json");
-    expect(req.headers["User-Agent"]).toMatch(/^gnhf\/1\.2\.3 telemetry$/);
+    expect(req.headers["User-Agent"]).toMatch(/^gnpk\/1\.2\.3 telemetry$/);
 
     const body = req.body as {
       type: string;
@@ -186,7 +186,7 @@ describe("TelemetryClient", () => {
     expect(body.payload.website).toBe("site-1");
     expect(body.payload.hostname).toBe("cli");
     expect(body.payload.name).toBe("run");
-    expect(body.payload.url).toBe("app://gnhf/run");
+    expect(body.payload.url).toBe("app://gnpk/run");
     expect(body.payload.data).toMatchObject({
       agent: "claude",
       status: "success",
@@ -200,7 +200,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com/umami/",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });
@@ -217,7 +217,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com/api/send",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });
@@ -234,7 +234,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });
@@ -255,7 +255,7 @@ describe("TelemetryClient", () => {
       enabled: false,
       host: "https://a.example.com",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });
@@ -274,7 +274,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });
@@ -289,7 +289,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });
@@ -307,7 +307,7 @@ describe("TelemetryClient", () => {
       enabled: true,
       host: "https://a.example.com",
       websiteID: "site-1",
-      app: "gnhf",
+      app: "gnpk",
       version: "1.0.0",
       fetch,
     });

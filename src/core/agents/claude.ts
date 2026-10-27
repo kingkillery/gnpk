@@ -512,7 +512,7 @@ export class ClaudeAgent implements Agent {
           reject(
             isPermanentClaudeError(failure.errorOutput)
               ? new PermanentAgentError(
-                  "claude credit balance too low - see gnhf.log",
+                  "claude credit balance too low - see gnpk.log",
                   failure.detail,
                 )
               : new Error(failure.detail),

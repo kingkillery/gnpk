@@ -44,7 +44,13 @@ export interface RunMetadata {
   commitMessage: CommitMessageConfig | undefined;
 }
 
-const LOG_FILENAME = "gnhf.log";
+const LOG_FILENAME = "gnpk.log";
+const LEGACY_LOG_FILENAME = "gnhf.log";
+function getRunLogPath(runDir: string): string {
+  const current = join(runDir, LOG_FILENAME);
+  const legacy = join(runDir, LEGACY_LOG_FILENAME);
+  return existsSync(current) || !existsSync(legacy) ? current : legacy;
+}
 const END_STATE_FILENAME = "end-state.json";
 const STOP_WHEN_FILENAME = "stop-when";
 const COMMIT_MESSAGE_FILENAME = "commit-message";
@@ -181,19 +187,29 @@ function ensureRunMetadataIgnored(cwd: string): void {
   const resolved = isAbsolute(excludePath)
     ? excludePath
     : join(cwd, excludePath);
-  const entry = ".gnhf/runs/";
+  const entries = [".gnpk/runs/", ".gnhf/runs/"];
   mkdirSync(dirname(resolved), { recursive: true });
 
   if (existsSync(resolved)) {
     const content = readFileSync(resolved, "utf-8");
-    if (content.split("\n").some((line) => line.trim() === entry)) return;
+    const missing = entries.filter(
+      (entry) => !content.split("\n").some((line) => line.trim() === entry),
+    );
+    if (!missing.length) return;
     const separator = content.length > 0 && !content.endsWith("\n") ? "\n" : "";
-    appendFileSync(resolved, `${separator}${entry}\n`, "utf-8");
+    appendFileSync(resolved, `${separator}${missing.join("\n")}\n`, "utf-8");
   } else {
     // This ignore rule is runtime metadata, so keep it local to the clone
     // instead of mutating tracked .gitignore state on startup.
-    writeFileSync(resolved, `${entry}\n`, "utf-8");
+    writeFileSync(resolved, `${entries.join("\n")}\n`, "utf-8");
   }
+}
+
+/** Prefer renamed metadata while retaining access to older GNHF runs. */
+export function resolveRunDirectory(cwd: string, runId: string): string {
+  const current = join(cwd, ".gnpk", "runs", runId);
+  const legacy = join(cwd, ".gnhf", "runs", runId);
+  return existsSync(current) ? current : existsSync(legacy) ? legacy : current;
 }
 
 export function setupRun(
@@ -205,17 +221,19 @@ export function setupRun(
 ): RunInfo {
   ensureRunMetadataIgnored(cwd);
 
-  const runDir = join(cwd, ".gnhf", "runs", runId);
+  const runDir = resolveRunDirectory(cwd, runId);
   mkdirSync(runDir, { recursive: true });
 
   const promptPath = join(runDir, "prompt.md");
   writeFileSync(promptPath, prompt, "utf-8");
 
   const notesPath = join(runDir, "notes.md");
+  const metadataDir =
+    runDir === join(cwd, ".gnhf", "runs", runId) ? ".gnhf" : ".gnpk";
   if (!existsSync(notesPath)) {
     writeFileSync(
       notesPath,
-      `# gnhf run: ${runId}\n\nObjective: see .gnhf/runs/${runId}/prompt.md\n\n## Iteration Log\n`,
+      `# gnpk run: ${runId}\n\nObjective: see ${metadataDir}/runs/${runId}/prompt.md\n\n## Iteration Log\n`,
       "utf-8",
     );
   }
@@ -223,7 +241,7 @@ export function setupRun(
   const schemaPath = join(runDir, "output-schema.json");
   writeSchemaFile(schemaPath, schemaOptions);
 
-  const logPath = join(runDir, LOG_FILENAME);
+  const logPath = getRunLogPath(runDir);
 
   const baseCommitPath = join(runDir, "base-commit");
   const hasStoredBaseCommit = existsSync(baseCommitPath);
@@ -264,7 +282,7 @@ export function resumeRun(
   cwd: string,
   schemaOptions: RunSchemaOptions,
 ): RunInfo {
-  const runDir = join(cwd, ".gnhf", "runs", runId);
+  const runDir = resolveRunDirectory(cwd, runId);
   if (!existsSync(runDir)) {
     throw new Error(`Run directory not found: ${runDir}`);
   }
@@ -272,7 +290,7 @@ export function resumeRun(
   const promptPath = join(runDir, "prompt.md");
   const notesPath = join(runDir, "notes.md");
   const schemaPath = join(runDir, "output-schema.json");
-  const logPath = join(runDir, LOG_FILENAME);
+  const logPath = getRunLogPath(runDir);
   const baseCommitPath = join(runDir, "base-commit");
   const baseCommit = existsSync(baseCommitPath)
     ? readFileSync(baseCommitPath, "utf-8").trim()
@@ -312,7 +330,7 @@ export function resumeRun(
 }
 
 export function peekRunMetadata(runId: string, cwd: string): RunMetadata {
-  const runDir = join(cwd, ".gnhf", "runs", runId);
+  const runDir = resolveRunDirectory(cwd, runId);
   if (!existsSync(runDir)) {
     throw new Error(`Run directory not found: ${runDir}`);
   }

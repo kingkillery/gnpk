@@ -52,7 +52,7 @@ interface RovoDevServer {
 
 function buildSystemPrompt(schema: string): string {
   return [
-    "You are the coding agent used by gnhf.",
+    "You are the coding agent used by gnpk.",
     "Work autonomously in the current workspace and use tools when needed.",
     "When you finish, reply with only valid JSON.",
     "Do not wrap the JSON in markdown fences.",
@@ -448,7 +448,7 @@ export class RovoDevAgent implements Agent {
       "/v3/sessions/create",
       {
         method: "POST",
-        body: { custom_title: "gnhf" },
+        body: { custom_title: "gnpk" },
         signal,
       },
     );

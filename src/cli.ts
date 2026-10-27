@@ -49,6 +49,7 @@ import {
   getLastIterationNumber,
   getCompletedIterationCount,
   writeRunEndState,
+  resolveRunDirectory,
 } from "./core/run.js";
 import { readStdinText } from "./core/stdin.js";
 import { startSleepPrevention } from "./core/sleep.js";
@@ -59,6 +60,7 @@ import {
   type CommitMessageConfig,
 } from "./core/commit-message.js";
 import { Orchestrator } from "./core/orchestrator.js";
+import { createDraftPullRequest } from "./core/draft-pr.js";
 import {
   renderExitSummary,
   type SleepPreventionNotice,
@@ -272,7 +274,7 @@ function resumeCurrentBranchRun(
   schemaOptions: RunSchemaOptions,
 ): RunInfo | null {
   const runId = promptRunId(prompt);
-  if (!existsSync(join(cwd, ".gnhf", "runs", runId))) {
+  if (!existsSync(resolveRunDirectory(cwd, runId))) {
     return null;
   }
   ensureCleanWorkingTree(cwd);
@@ -319,7 +321,7 @@ function runIdWithSuffix(runId: string, suffix: number): string {
 function createRunIdWithSuffix(runId: string, cwd: string): string {
   for (let suffix = 0; suffix < 100; suffix += 1) {
     const candidate = runIdWithSuffix(runId, suffix);
-    if (!existsSync(join(cwd, ".gnhf", "runs", candidate))) {
+    if (!existsSync(resolveRunDirectory(cwd, candidate))) {
       return candidate;
     }
   }
@@ -346,7 +348,7 @@ function initializeWorktreeRun(
   const baseCommit = getHeadCommit(cwd);
   const branchName = slugifyPrompt(prompt);
   const makeWorktreePath = (runId: string) =>
-    join(dirname(repoRoot), `${basename(repoRoot)}-gnhf-worktrees`, runId);
+    join(dirname(repoRoot), `${basename(repoRoot)}-gnpk-worktrees`, runId);
   const runId = branchName.split("/")[1]!;
   const worktreePath = makeWorktreePath(runId);
   const registeredWorktreePaths = listWorktreePaths(repoRoot);
@@ -358,7 +360,7 @@ function initializeWorktreeRun(
   ): WorktreeRunResult | null => {
     if (
       !registeredWorktreePaths.has(resolve(candidateWorktreePath)) ||
-      !existsSync(join(candidateWorktreePath, ".gnhf", "runs", candidateRunId))
+      !existsSync(resolveRunDirectory(candidateWorktreePath, candidateRunId))
     ) {
       return null;
     }
@@ -596,8 +598,8 @@ function readReexecStdinPrompt(env: NodeJS.ProcessEnv): string | undefined {
 const program = new Command();
 
 program
-  .name("gnhf")
-  .description("Before I go to bed, I tell my agents: good night, have fun")
+  .name("gnpk")
+  .description("goodnight, PK")
   .version(packageVersion)
   .argument("[prompt]", "The objective for the coding agent")
   .option(
@@ -644,12 +646,17 @@ program
   )
   .option(
     "--current-branch",
-    "Run on the current branch instead of creating a gnhf branch",
+    "Run on the current branch instead of creating a gnpk branch",
     false,
   )
   .option(
     "--push",
     "Push the current branch after each successful iteration",
+    false,
+  )
+  .option(
+    "--draft-pr",
+    "Create a draft GitHub pull request after a successful worktree run",
     false,
   )
   .option(
@@ -674,6 +681,7 @@ program
         worktree: boolean;
         currentBranch: boolean;
         push: boolean;
+        draftPr: boolean;
         meteorFrequency: number;
         mock: boolean;
       },
@@ -799,10 +807,17 @@ program
       };
 
       const currentBranch = getCurrentBranch(cwd);
-      const onGnhfBranch = currentBranch.startsWith("gnhf/");
+      const onGnhfBranch =
+        currentBranch.startsWith("gnpk/") || currentBranch.startsWith("gnhf/");
 
       if (options.currentBranch && options.worktree) {
         console.error("Cannot combine --current-branch and --worktree.");
+        process.exit(1);
+      }
+      if (options.draftPr && (!options.worktree || options.push)) {
+        console.error(
+          "--draft-pr requires --worktree and cannot be combined with --push.",
+        );
         process.exit(1);
       }
 
@@ -826,7 +841,7 @@ program
 
         if (onGnhfBranch) {
           console.error(
-            "Cannot use --worktree from a gnhf branch. Switch to the base branch first.",
+            "Cannot use --worktree from a gnpk or legacy gnhf branch. Switch to the base branch first.",
           );
           process.exit(1);
         }
@@ -852,8 +867,8 @@ program
           );
           startIteration = getLastIterationNumber(runInfo);
           console.error(
-            `\n  gnhf: resuming preserved worktree at ${worktreePath}` +
-              `\n  gnhf: continuing run ${runInfo.runId} from iteration ${startIteration}\n`,
+            `\n  gnpk: resuming preserved worktree at ${worktreePath}` +
+              `\n  gnpk: continuing run ${runInfo.runId} from iteration ${startIteration}\n`,
           );
         } else {
           worktreeCleanup = () => {
@@ -902,7 +917,9 @@ program
           runInfo = initializeCurrentBranchRun(prompt, cwd, schemaOptions);
         }
       } else if (onGnhfBranch) {
-        const existingRunId = currentBranch.slice("gnhf/".length);
+        const existingRunId = currentBranch.slice(
+          currentBranch.indexOf("/") + 1,
+        );
         const existingMetadata = peekRunMetadata(existingRunId, cwd);
         effectiveCommitMessage = existingMetadata.commitMessage;
         const existingPrompt = readFileSync(
@@ -932,13 +949,13 @@ program
           startIteration = getLastIterationNumber(existing);
         } else {
           const answer = await ask(
-            `You are on gnhf branch "${currentBranch}".\n` +
+            `You are on a gnpk or legacy gnhf branch "${currentBranch}".\n` +
               `  (o) Update prompt and continue current run\n` +
               `  (n) Start a new branch on top of this one\n` +
               `  (q) Quit\n` +
               `Choose [o/n/q]: `,
-            "The overwrite prompt closed before a choice was entered. Re-run gnhf from an interactive terminal and choose o, n, or q.",
-            "Cannot show the overwrite prompt because stdin is not interactive. Re-run gnhf from an interactive terminal and choose o, n, or q.",
+            "The overwrite prompt closed before a choice was entered. Re-run gnpk from an interactive terminal and choose o, n, or q.",
+            "Cannot show the overwrite prompt because stdin is not interactive. Re-run gnpk from an interactive terminal and choose o, n, or q.",
           );
 
           if (answer === "o") {
@@ -1161,7 +1178,9 @@ program
           // but a real abort still deserves the done screen even if a prior
           // ctrl+c already set the eventual SIGINT exit code.
           const keepTui =
-            orchestrator.getState().status === "aborted" && process.stdin.isTTY;
+            orchestrator.getState().status === "aborted" &&
+            process.stdin.isTTY &&
+            !options.draftPr;
           if (!keepTui) {
             renderer.stop();
           }
@@ -1193,10 +1212,10 @@ program
             timeoutMs: FORCE_EXIT_TIMEOUT_MS,
           });
           console.error(
-            `\n  gnhf: shutdown timed out after ${FORCE_EXIT_TIMEOUT_MS / 1000}s, forcing exit\n`,
+            `\n  gnpk: shutdown timed out after ${FORCE_EXIT_TIMEOUT_MS / 1000}s, forcing exit\n`,
           );
           if (worktreePath && shouldPreserveWorktree()) {
-            console.error(`  gnhf: worktree preserved at ${worktreePath}\n`);
+            console.error(`  gnpk: worktree preserved at ${worktreePath}\n`);
           }
           process.exit(getSignalExitCode(shutdownSignal ?? "SIGINT"));
         }
@@ -1318,7 +1337,7 @@ program
         await telemetry.close(1_000);
 
         if (finalState.status === "aborted") {
-          console.error(`\n  gnhf: Run log: ${runInfo.logPath}\n`);
+          console.error(`\n  gnpk: Run log: ${runInfo.logPath}\n`);
         }
 
         if (worktreePath) {
@@ -1328,8 +1347,8 @@ program
           ) {
             worktreeCleanup = null;
             console.error(
-              `\n  gnhf: worktree preserved at ${worktreePath}` +
-                `\n  gnhf: merge the branch and remove with: git worktree remove "${worktreePath}"\n`,
+              `\n  gnpk: worktree preserved at ${worktreePath}` +
+                `\n  gnpk: merge the branch and remove with: git worktree remove "${worktreePath}"\n`,
             );
           } else {
             worktreeCleanup?.();
@@ -1341,6 +1360,29 @@ program
         }
 
         process.stdout.write(exitSummary);
+        if (options.draftPr && worktreePath) {
+          try {
+            const url = createDraftPullRequest({
+              baseBranch: currentBranch,
+              baseCommit: runInfo.baseCommit,
+              branch: finalBranchName,
+              worktree: worktreePath,
+              runDir: runInfo.runDir,
+              successCount: finalState.successCount,
+              failCount: finalState.failCount,
+              agentError: finalState.lastAgentError ?? null,
+              hasPendingCommitFailure: Boolean(
+                finalState.hasPendingCommitFailure,
+              ),
+            });
+            console.log(`\n  gnpk: draft pull request created: ${url}\n`);
+          } catch (error) {
+            console.error(
+              `\n  gnpk: draft pull request was not created: ${humanizeErrorMessage(error instanceof Error ? error.message : String(error))}\n`,
+            );
+            process.exitCode = 1;
+          }
+        }
       }
 
       if (shutdownSignal) {
@@ -1360,7 +1402,7 @@ function exitAltScreen() {
 }
 
 function die(message: string): never {
-  console.error(`\n  gnhf: ${humanizeErrorMessage(message)}\n`);
+  console.error(`\n  gnpk: ${humanizeErrorMessage(message)}\n`);
   process.exit(1);
 }
 

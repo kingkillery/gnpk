@@ -138,7 +138,7 @@ describe("CursorAgent", () => {
       expect.stringContaining("test prompt"),
     );
     expect(proc.stdin.write).toHaveBeenCalledWith(
-      expect.stringContaining("gnhf final output contract"),
+      expect.stringContaining("gnpk final output contract"),
     );
     expect(proc.stdin.end).toHaveBeenCalled();
   });

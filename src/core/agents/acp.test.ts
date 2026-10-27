@@ -163,7 +163,7 @@ describe("AcpAgent", () => {
     const tempDir = mkdtempSync(join(tmpdir(), "gnhf-acp-test-"));
     try {
       resetDebugLogForTests();
-      const logPath = join(tempDir, "gnhf.log");
+      const logPath = join(tempDir, "gnpk.log");
       initDebugLog(logPath);
       const rawTarget = "./bin/dev-acp --profile ci --token secret";
       const { runtime } = createFakeRuntime([
@@ -191,7 +191,7 @@ describe("AcpAgent", () => {
     const tempDir = mkdtempSync(join(tmpdir(), "gnhf-acp-test-"));
     try {
       resetDebugLogForTests();
-      const logPath = join(tempDir, "gnhf.log");
+      const logPath = join(tempDir, "gnpk.log");
       initDebugLog(logPath);
       const rawTarget = "./bin/dev-acp --profile ci --token secret";
       const streamError = new Error(`failed to start ${rawTarget}`, {
@@ -229,7 +229,7 @@ describe("AcpAgent", () => {
     const tempDir = mkdtempSync(join(tmpdir(), "gnhf-acp-test-"));
     try {
       resetDebugLogForTests();
-      const logPath = join(tempDir, "gnhf.log");
+      const logPath = join(tempDir, "gnpk.log");
       initDebugLog(logPath);
       const rawTarget = "./bin/dev-acp --profile ci --token secret";
       const startError = new Error(`spawn failed for ${rawTarget}`);

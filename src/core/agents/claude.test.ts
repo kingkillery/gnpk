@@ -1185,7 +1185,7 @@ describe("ClaudeAgent", () => {
 
     await expect(promise).rejects.toBeInstanceOf(PermanentAgentError);
     await expect(promise).rejects.toMatchObject({
-      message: "claude credit balance too low - see gnhf.log",
+      message: "claude credit balance too low - see gnpk.log",
       detail:
         "claude exited with code 1: Credit balance is too low to access Claude Code",
       cause:
