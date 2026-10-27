@@ -55,14 +55,19 @@ interface ResolveInput {
 export function resolveTelemetryConfig(
   input: ResolveInput,
 ): ResolvedTelemetryConfig {
-  const optOut = (input.env.GNPK_TELEMETRY ?? input.env.GNHF_TELEMETRY ?? "").trim().toLowerCase();
+  const optOut = (input.env.GNPK_TELEMETRY ?? input.env.GNHF_TELEMETRY ?? "")
+    .trim()
+    .toLowerCase();
   if (optOut === "0" || optOut === "false" || optOut === "off") {
     return { enabled: false, host: "", websiteID: "" };
   }
 
   const websiteID =
-    (input.env.GNPK_UMAMI_WEBSITE_ID ?? input.env.GNHF_UMAMI_WEBSITE_ID ?? "").trim() ||
-    input.buildWebsiteID.trim();
+    (
+      input.env.GNPK_UMAMI_WEBSITE_ID ??
+      input.env.GNHF_UMAMI_WEBSITE_ID ??
+      ""
+    ).trim() || input.buildWebsiteID.trim();
   if (!websiteID) {
     return { enabled: false, host: "", websiteID: "" };
   }

@@ -133,18 +133,9 @@ export function renderTitleCells(agentName?: string): Cell[][] {
   return [
     eyebrow,
     [],
-    textToCells(
-      "┏━╸┏━┓┏━┓╺┳┓   ┏┓╻╻┏━╸╻ ╻╺┳╸   ┏━┓╻┏╸",
-      "bold",
-    ),
-    textToCells(
-      "┃╺┓┃ ┃┃ ┃ ┃┃   ┃┗┫┃┃╺┓┣━┫ ┃    ┣━┛┣┻┓",
-      "bold",
-    ),
-    textToCells(
-      "┗━┛┗━┛┗━┛╺┻┛   ╹ ╹╹┗━┛╹ ╹ ╹    ╹  ╹ ╹",
-      "bold",
-    ),
+    textToCells("┏━╸┏━┓┏━┓╺┳┓   ┏┓╻╻┏━╸╻ ╻╺┳╸   ┏━┓╻┏╸", "bold"),
+    textToCells("┃╺┓┃ ┃┃ ┃ ┃┃   ┃┗┫┃┃╺┓┣━┫ ┃    ┣━┛┣┻┓", "bold"),
+    textToCells("┗━┛┗━┛┗━┛╺┻┛   ╹ ╹╹┗━┛╹ ╹ ╹    ╹  ╹ ╹", "bold"),
   ];
 }
 
