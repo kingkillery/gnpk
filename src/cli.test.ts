@@ -209,7 +209,8 @@ async function runCliWithMocks(
       })),
   }));
   vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+    resolveRunDirectory: (cwd: string, id: string) =>
+      join(cwd, ".gnpk", "runs", id),
     setupRun,
     peekRunMetadata,
     resumeRun,
@@ -416,7 +417,8 @@ async function runSigintCliTest({
     getCurrentBranch: vi.fn(() => "main"),
   }));
   vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+    resolveRunDirectory: (cwd: string, id: string) =>
+      join(cwd, ".gnpk", "runs", id),
     setupRun: vi.fn(() => stubRunInfo),
     peekRunMetadata: vi.fn(() => stubRunInfo),
     resumeRun: vi.fn(),
@@ -1882,7 +1884,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -2035,7 +2038,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2176,7 +2180,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2313,7 +2318,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2445,7 +2451,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2574,7 +2581,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "gnpk/existing-run"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => ({
         ...stubRunInfo,
@@ -2704,7 +2712,8 @@ describe("cli", () => {
       removeWorktree: vi.fn(),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun,
       peekRunMetadata,
       resumeRun,
@@ -2881,7 +2890,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3032,7 +3042,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3211,7 +3222,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
@@ -3368,7 +3380,8 @@ describe("cli", () => {
       getCurrentBranch: vi.fn(() => "main"),
     }));
     vi.doMock("./core/run.js", () => ({
-    resolveRunDirectory: (cwd: string, id: string) => join(cwd, ".gnpk", "runs", id),
+      resolveRunDirectory: (cwd: string, id: string) =>
+        join(cwd, ".gnpk", "runs", id),
       setupRun: vi.fn(() => stubRunInfo),
       peekRunMetadata: vi.fn(() => stubRunInfo),
       resumeRun: vi.fn(),
