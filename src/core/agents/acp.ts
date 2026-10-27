@@ -43,7 +43,7 @@ export interface AcpAgentDeps {
 function buildAcpPrompt(prompt: string, schema: AgentOutputSchema): string {
   return `${prompt}
 
-## gnhf final output contract
+## gnpk final output contract
 
 When the iteration is complete, your final assistant message must be a single JSON object that matches this JSON Schema. Return only the JSON object. Do not wrap it in Markdown fences. Do not include prose before or after the JSON.
 

@@ -71,7 +71,7 @@ function readJsonLines(filePath: string): Record<string, unknown>[] {
 }
 
 function findRunLogPath(cwd: string): string {
-  const runsDir = join(cwd, ".gnhf", "runs");
+  const runsDir = join(cwd, ".gnpk", "runs");
   if (!existsSync(runsDir)) {
     throw new Error(`No run directory found under ${runsDir}`);
   }
@@ -81,7 +81,7 @@ function findRunLogPath(cwd: string): string {
       `Expected exactly one run in ${runsDir}, found ${runs.length}: ${runs.join(", ")}`,
     );
   }
-  return join(runsDir, runs[0]!, "gnhf.log");
+  return join(runsDir, runs[0]!, "gnpk.log");
 }
 
 function runCli(
@@ -121,9 +121,9 @@ function createCursorEnv(
 ): NodeJS.ProcessEnv {
   const home = mkdtempSync(join(tmpdir(), "gnhf-e2e-cursor-home-"));
   tempDirs.push(home);
-  mkdirSync(join(home, ".gnhf"), { recursive: true });
+  mkdirSync(join(home, ".gnpk"), { recursive: true });
   writeFileSync(
-    join(home, ".gnhf", "config.yml"),
+    join(home, ".gnpk", "config.yml"),
     [
       "agent: cursor",
       "preventSleep: false",
@@ -189,14 +189,14 @@ describe("gnhf e2e cursor agent", () => {
     );
 
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain("gnhf stopped");
+    expect(result.stdout).toContain("gnpk stopped");
     expect(result.stdout).toContain("cursor ran");
     expect(result.stdout).toContain("max iterations reached (1)");
     expect(readFileSync(join(cwd, "hello.txt"), "utf-8")).toBe(
       "hello from cursor mock\n",
     );
     expect(git(["rev-list", "--count", "HEAD"], cwd)).toBe("2");
-    expect(git(["log", "-1", "--format=%s"], cwd)).toContain("gnhf 1:");
+    expect(git(["log", "-1", "--format=%s"], cwd)).toContain("gnpk 1:");
 
     const spawnEvent = readJsonLines(mockLogPath).find(
       (entry) => entry.event === "spawn",

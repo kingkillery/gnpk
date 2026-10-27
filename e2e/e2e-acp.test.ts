@@ -64,14 +64,14 @@ function readJsonLines(filePath: string): Record<string, unknown>[] {
 }
 
 function findRunLogPath(cwd: string): string {
-  const runsDir = join(cwd, ".gnhf", "runs");
+  const runsDir = join(cwd, ".gnpk", "runs");
   const runs = readdirSync(runsDir);
   if (runs.length !== 1) {
     throw new Error(
       `Expected exactly one run in ${runsDir}, found ${runs.length}`,
     );
   }
-  return join(runsDir, runs[0]!, "gnhf.log");
+  return join(runsDir, runs[0]!, "gnpk.log");
 }
 
 async function waitForLogEvent(
@@ -123,8 +123,8 @@ function setupAcpHome(
 } {
   const home = mkdtempSync(join(tmpdir(), "gnhf-e2e-acp-home-"));
   tempDirs.push(home);
-  mkdirSync(join(home, ".gnhf"), { recursive: true });
-  const configPath = join(home, ".gnhf", "config.yml");
+  mkdirSync(join(home, ".gnpk"), { recursive: true });
+  const configPath = join(home, ".gnpk", "config.yml");
   writeFileSync(
     configPath,
     [

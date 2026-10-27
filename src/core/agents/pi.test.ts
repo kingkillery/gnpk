@@ -70,7 +70,7 @@ describe("PiAgent", () => {
       expect.stringContaining("test prompt"),
     );
     expect(proc.stdin.write).toHaveBeenCalledWith(
-      expect.stringContaining("gnhf final output contract"),
+      expect.stringContaining("gnpk final output contract"),
     );
     expect(proc.stdin.write).toHaveBeenCalledWith(
       expect.stringContaining("key_changes_made"),

@@ -11,7 +11,12 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { CommitFailedError, commitAll, createBranch } from "./git.js";
+import {
+  CommitFailedError,
+  commitAll,
+  createBranch,
+  gitForDraftPr,
+} from "./git.js";
 
 function rawGit(args: string[], cwd: string): string {
   return execFileSync("git", args, { cwd, encoding: "utf-8" }).trim();
@@ -112,5 +117,17 @@ describe("git shell injection regression", () => {
     expect(existsSync(marker)).toBe(false);
     expect(existsSync(repoMarker)).toBe(false);
     expect(rawGit(["branch", "--show-current"], repo)).toBe(injected);
+  });
+
+  it("draft PR git arguments treat shell metacharacters as data", () => {
+    const repo = makeRepo();
+    repos.push(repo);
+    const injected = `gnpk/evil\`touch\${IFS}${markerName}\``;
+    createBranch(injected, repo);
+    expect(gitForDraftPr(["branch", "--list", injected], repo)).toContain(
+      injected,
+    );
+    expect(existsSync(join(repo, markerName))).toBe(false);
+    expect(existsSync(marker)).toBe(false);
   });
 });

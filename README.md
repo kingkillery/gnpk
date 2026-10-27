@@ -1,21 +1,16 @@
 <p align="center">Before I go to bed, I tell my agents:</p>
-<h1 align="center">good night, have fun</h1>
+<h1 align="center">goodnight, PK</h1>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/gnhf"
-    ><img
-      alt="npm"
-      src="https://img.shields.io/npm/v/gnhf?style=flat-square"
-  /></a>
-  <a href="https://github.com/kunchenguid/gnhf/actions/workflows/ci.yml"
+  <a href="https://github.com/kingkillery/gnpk/actions/workflows/ci.yml"
     ><img
       alt="CI"
-      src="https://img.shields.io/github/actions/workflow/status/kunchenguid/gnhf/ci.yml?style=flat-square&label=ci"
+      src="https://img.shields.io/github/actions/workflow/status/kingkillery/gnpk/ci.yml?style=flat-square&label=ci"
   /></a>
-  <a href="https://github.com/kunchenguid/gnhf/actions/workflows/release-please.yml"
+  <a href="https://github.com/kingkillery/gnpk/actions/workflows/release-please.yml"
     ><img
       alt="Release"
-      src="https://img.shields.io/github/actions/workflow/status/kunchenguid/gnhf/release-please.yml?style=flat-square&label=release"
+      src="https://img.shields.io/github/actions/workflow/status/kingkillery/gnpk/release-please.yml?style=flat-square&label=release"
   /></a>
   <a
     href="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-blue?style=flat-square"
@@ -35,13 +30,13 @@
   /></a>
 </p>
 
-<p align="center">
-  <img src="docs/splash.png" alt="gnhf - Good Night, Have Fun" width="800">
-</p>
+
 
 Never wake up empty-handed.
 
-gnhf is a [ralph](https://ghuntley.com/ralph/), [autoresearch](https://github.com/karpathy/autoresearch)-style orchestrator that keeps your agents running while you sleep - each iteration makes one small, committed, documented change towards an objective.
+GNPK is adapted from the original [gnhf](https://github.com/kunchenguid/gnhf) project.
+
+gnpk is a [ralph](https://ghuntley.com/ralph/), [autoresearch](https://github.com/karpathy/autoresearch)-style orchestrator that keeps your agents running while you sleep - each iteration makes one small, committed, documented change towards an objective.
 You wake up to a branch full of clean work and a log of everything that happened.
 
 - **Dead simple** - one command starts an autonomous loop that runs until you request stop or a configured runtime cap is reached
@@ -53,12 +48,12 @@ You wake up to a branch full of clean work and a log of everything that happened
 ## Quick Start
 
 ```sh
-$ gnhf "reduce complexity of the codebase without changing functionality"
+$ gnpk "reduce complexity of the codebase without changing functionality"
 # have a good sleep
 ```
 
 ```sh
-$ gnhf "reduce complexity of the codebase without changing functionality" \
+$ gnpk "reduce complexity of the codebase without changing functionality" \
     --max-iterations 10 \
     --max-tokens 5000000
 # have a good nap
@@ -66,49 +61,63 @@ $ gnhf "reduce complexity of the codebase without changing functionality" \
 
 ```sh
 # Run multiple agents on the same repo simultaneously using worktrees
-$ gnhf --worktree "implement feature X" &
-$ gnhf --worktree "add tests for module Y" &
-$ gnhf --worktree "refactor the API layer" &
+$ gnpk --worktree "implement feature X" &
+$ gnpk --worktree "add tests for module Y" &
+$ gnpk --worktree "refactor the API layer" &
 ```
 
 ```sh
 # Commit directly on the current branch and push after each successful iteration
-$ gnhf --current-branch --push "keep improving this app"
+$ gnpk --current-branch --push "keep improving this app"
 ```
 
-Run `gnhf` from inside a Git repository with a clean working tree. If you are starting from a plain directory, run `git init` first.
-`gnhf` supports macOS, Linux, and Windows.
+Run `gnpk` from inside a Git repository with a clean working tree. If you are starting from a plain directory, run `git init` first.
+`gnpk` supports macOS, Linux, and Windows.
 
 ## Install
-
-**npm**
-
-```sh
-npm install -g gnhf
-```
 
 **From source**
 
 ```sh
-git clone https://github.com/kunchenguid/gnhf.git
-cd gnhf
+git clone https://github.com/kingkillery/gnpk.git
+cd gnpk
 corepack enable
 pnpm install
 pnpm run build
 pnpm link --global
 ```
 
+On Windows, the optional PK-Herdr launcher adds unattended worktree and draft
+PR defaults, and permits simultaneous runs from separate panes:
+
+```powershell
+npm install --global ./launchers/windows
+gnpk "Implement feature X" --agent pi --max-iterations 3
+gnpk "Add tests for Y" --agent ompk --max-iterations 3
+```
+
+The launcher requires a PK-Herdr pane and an authenticated GitHub CLI for
+draft PRs. Configure Pi and the `acp:ompk` registry target before using them.
+Use `--no-pr` to keep a local worktree, or `--current-branch` to work on the
+current branch. The launcher's `gnpk` command does not support `--push`;
+the examples above using `--push` refer to the native CLI. Git worktrees do
+not sandbox the agent from other files or external services.
+
+## Existing runs
+
+Existing `gnhf/` branches and `.gnhf/runs/` metadata remain resumable. New runs use `gnpk/` and `.gnpk/runs/`.
+
 ## Agent Skill
 
-The npm package includes an agent-facing skill at `skills/gnhf/SKILL.md`. Agents that support local skills can copy or reference this file to learn how to run GNHF in Hands-Off mode for bounded overnight work, or Companion mode when the outer agent should steer and review a long-running GNHF run.
+The npm package includes an agent-facing skill at `skills/gnpk/SKILL.md`. Agents that support local skills can copy or reference this file to learn how to run GNPK in Hands-Off mode for bounded overnight work, or Companion mode when the outer agent should steer and review a long-running GNPK run.
 
-After installing from npm, the skill is available under the installed package directory. From a source checkout, use `skills/gnhf/SKILL.md` directly.
+After installing from npm, the skill is available under the installed package directory. From a source checkout, use `skills/gnpk/SKILL.md` directly.
 
 ## How It Works
 
 ```
                     ┌─────────────┐
-                    │  gnhf start │
+                    │  gnpk start │
                     └──────┬──────┘
                            ▼
                 ┌──────────────────────┐
@@ -151,30 +160,30 @@ After installing from npm, the skill is available under the installed package di
                     └──────────────────────────────────────┘
 ```
 
-- **Incremental commits** - each successful iteration is a separate unsigned git commit, so you can cherry-pick or revert individual changes without GPG or SSH signing prompts blocking the run; if `git commit` fails, gnhf preserves the uncommitted work and asks the next agent iteration to repair it
+- **Incremental commits** - each successful iteration is a separate unsigned git commit, so you can cherry-pick or revert individual changes without GPG or SSH signing prompts blocking the run; if `git commit` fails, gnpk preserves the uncommitted work and asks the next agent iteration to repair it
 - **Failure handling** - failed iterations are rolled back with `git reset --hard` except commit failures, which preserve uncommitted work for repair; agent-reported failures proceed to the next iteration immediately, retryable hard agent errors use exponential backoff, and permanent agent errors such as Claude low credit balance abort immediately and print the run log path. Complete no-op iterations are reported as failures and count toward the consecutive-failure abort limit. If the run exits with a pending commit failure, the exit summary warns that uncommitted changes were left for repair.
-- **OpenCode empty responses** - when a turn completes (`session.idle`) without structured output or a final answer, gnhf asks for a final summary once more in the same session, preserving the work within the same iteration and combining token usage from both turns. A second empty response fails the iteration. If either stream ends before `session.idle`, the iteration fails without another continuation, even if answer text arrived. These failures follow the rollback and backoff rules above.
-- **Usage-limit waits** - gnhf waits out an exhausted usage window (e.g. the subscription 5-hour window) instead of running through it, in both forms it takes. When Claude rejects requests, the iteration is rolled back but not counted as a failure; gnhf reads the reset time from the agent's rate-limit event, waits until shortly after the window resets, then retries the same iteration automatically, so overnight runs resume on their own. Pass `--fallback-model <model>` with `--agent claude` to retry the first rejected iteration on that model instead; without the flag, gnhf never changes models. If no reset time is reported for a rejection, it retries on a bounded escalating interval instead. When usage credits are enabled the provider serves the request and bills the overage rather than rejecting it. A billed iteration that succeeded keeps its committed work and is counted normally; one that failed is rolled back and counted as a failure like any other. Either way gnhf then waits for the reset before starting the next iteration, so the run stops spending credits without throwing away finished work. If the reported reset time has already passed, the included window is back and the run simply continues - if the provider is still billing, the next iteration reports it again with a fresh reset time. If no reset time comes with it at all, or one so far out that gnhf cannot sleep through it in a single wait, gnhf aborts the run rather than keep buying iterations by probing. Use `--max-rate-limit-wait` to set a total wait leash for the run; if the next wait would exceed it, gnhf aborts cleanly. Ctrl+C during the wait works as usual.
+- **OpenCode empty responses** - when a turn completes (`session.idle`) without structured output or a final answer, gnpk asks for a final summary once more in the same session, preserving the work within the same iteration and combining token usage from both turns. A second empty response fails the iteration. If either stream ends before `session.idle`, the iteration fails without another continuation, even if answer text arrived. These failures follow the rollback and backoff rules above.
+- **Usage-limit waits** - gnpk waits out an exhausted usage window (e.g. the subscription 5-hour window) instead of running through it, in both forms it takes. When Claude rejects requests, the iteration is rolled back but not counted as a failure; gnpk reads the reset time from the agent's rate-limit event, waits until shortly after the window resets, then retries the same iteration automatically, so overnight runs resume on their own. Pass `--fallback-model <model>` with `--agent claude` to retry the first rejected iteration on that model instead; without the flag, gnpk never changes models. If no reset time is reported for a rejection, it retries on a bounded escalating interval instead. When usage credits are enabled the provider serves the request and bills the overage rather than rejecting it. A billed iteration that succeeded keeps its committed work and is counted normally; one that failed is rolled back and counted as a failure like any other. Either way gnpk then waits for the reset before starting the next iteration, so the run stops spending credits without throwing away finished work. If the reported reset time has already passed, the included window is back and the run simply continues - if the provider is still billing, the next iteration reports it again with a fresh reset time. If no reset time comes with it at all, or one so far out that gnpk cannot sleep through it in a single wait, gnpk aborts the run rather than keep buying iterations by probing. Use `--max-rate-limit-wait` to set a total wait leash for the run; if the next wait would exceed it, gnpk aborts cleanly. Ctrl+C during the wait works as usual.
 - **Runtime caps** - `--max-iterations` stops before the next iteration begins, `--max-tokens` can abort mid-iteration once reported usage reaches the cap across input, output, cache-read, and cache-write tokens, and `--stop-when` ends the loop after an iteration whose agent output reports the natural-language condition is met unless a commit failure needs repair first; resumed runs reuse the saved stop condition unless you pass a new value, or `--stop-when ""` to clear it; pending commit-failure repair work is preserved and other uncommitted work is rolled back, and in the interactive TUI the final state remains visible until you press Ctrl+C to exit
 - **Iteration progress** - with `--max-iterations`, the interactive stats line shows `completed/max` between the elapsed timer and token totals. The count includes finished iterations restored on resume and advances only after the active iteration finishes, whether it succeeds or fails. Runs without an iteration cap omit this segment. To fit crowded stats rows, separator spaces are removed and, if needed, token labels become `Σ` (total), `↓` (input), and `↑` (output).
 - **Iteration finalization** - agents are expected to finish validation, stop any background processes they started, and only then emit the final JSON result for the iteration
 - **Graceful interrupts** - in the interactive TUI, the first Ctrl+C requests a graceful stop and lets the current iteration finish (or ends backoff early), the second Ctrl+C force-stops immediately, and `SIGTERM` also force-stops immediately
-- **Exit summary** - after shutdown cleanup, gnhf prints a permanent stdout summary with the final branch, elapsed time, iteration and token totals, branch diff stats, notes/debug-log paths, and review commands
+- **Exit summary** - after shutdown cleanup, gnpk prints a permanent stdout summary with the final branch, elapsed time, iteration and token totals, branch diff stats, notes/debug-log paths, and review commands
 - **Shared memory** - the agent reads `notes.md` (built up from prior iterations) to communicate across iterations
-- **Local run metadata** - gnhf stores prompt, notes, stop conditions, commit-message convention metadata, and a final `end-state.json` sidecar with the exit status, stop condition, agent error, and counters under `.gnhf/runs/`, and ignores it locally, so your branch only contains intentional work
-- **Resume support** - run `gnhf` while on an existing `gnhf/` branch to pick up where a previous run left off; if you provide a different prompt, gnhf asks whether to update the saved prompt and continue with the existing history, start a new branch, or quit. New runs whose generated branch already exists use a numeric suffix such as `gnhf/<slug>-1`.
+- **Local run metadata** - gnpk stores prompt, notes, stop conditions, commit-message convention metadata, and a final `end-state.json` sidecar with the exit status, stop condition, agent error, and counters under `.gnpk/runs/`, and ignores it locally, so your branch only contains intentional work
+- **Resume support** - run `gnpk` while on an existing `gnpk/` branch to pick up where a previous run left off; if you provide a different prompt, gnpk asks whether to update the saved prompt and continue with the existing history, start a new branch, or quit. New runs whose generated branch already exists use a numeric suffix such as `gnpk/<slug>-1`.
 
 ### Live Branch Mode
 
-Pass `--current-branch` to run on the branch you are already on instead of creating a `gnhf/` branch.
+Pass `--current-branch` to run on the branch you are already on instead of creating a `gnpk/` branch.
 Pass `--push` to push the current branch after each successful iteration.
 Together, `--current-branch --push` is useful for loose projects where you want a deployed or locally watched branch to update throughout the run.
 
-- Re-running the same prompt with `--current-branch` resumes the existing `.gnhf/runs/<runId>/` history on a clean working tree and continues iteration numbering.
+- Re-running the same prompt with `--current-branch` resumes the existing `.gnpk/runs/<runId>/` history on a clean working tree and continues iteration numbering.
 - Push failures abort the run after preserving the successful local commit.
-- gnhf never force-pushes or auto-pulls for this mode.
-- `--push` also works with the default `gnhf/` branch mode and sets `origin` as the upstream when needed.
-- Do not combine `--current-branch` with `--worktree`; gnhf exits with an error because those modes choose different working directories.
+- gnpk never force-pushes or auto-pulls for this mode.
+- `--push` also works with the default `gnpk/` branch mode and sets `origin` as the upstream when needed.
+- Do not combine `--current-branch` with `--worktree`; gnpk exits with an error because those modes choose different working directories.
 
 ### Worktree Mode
 
@@ -182,27 +191,27 @@ Pass `--worktree` to run each agent in an isolated [git worktree](https://git-sc
 
 ```
 <repo>/                              ← your repo (unchanged)
-<repo>-gnhf-worktrees/
+<repo>-gnpk-worktrees/
   ├── <run-slug-1>/                  ← worktree for agent 1
   └── <run-slug-2>/                  ← worktree for agent 2
 ```
 
-- Worktrees with commits are **preserved** after the run so you can review, merge, or cherry-pick the work. gnhf prints the path and cleanup command.
-- Re-running the same prompt with `--worktree` resumes a preserved matching worktree when possible; otherwise gnhf creates a suffixed worktree such as `<run-slug>-1` if the original name is unavailable.
+- Worktrees with commits are **preserved** after the run so you can review, merge, or cherry-pick the work. gnpk prints the path and cleanup command.
+- Re-running the same prompt with `--worktree` resumes a preserved matching worktree when possible; otherwise gnpk creates a suffixed worktree such as `<run-slug>-1` if the original name is unavailable.
 - Worktrees with **no commits** are automatically removed on exit unless a pending commit failure left uncommitted work to inspect or repair.
-- Known limitation: on Linux, when sleep prevention re-execs gnhf under `systemd-inhibit`, a worktree with no commits is left in place instead of being removed; remove it manually with `git worktree remove`. Tracked as `gnhf-reexec-worktree-leak-l1`.
-- `--worktree` must be run from a non-gnhf branch (typically `main`).
+- Known limitation: on Linux, when sleep prevention re-execs gnpk under `systemd-inhibit`, a worktree with no commits is left in place instead of being removed; remove it manually with `git worktree remove`. Tracked as `gnpk-reexec-worktree-leak-l1`.
+- `--worktree` must be run from a non-gnpk branch (typically `main`).
 
 ## CLI Reference
 
 | Command                   | Description                                     |
 | ------------------------- | ----------------------------------------------- |
-| `gnhf "<prompt>"`         | Start a new run with the given objective        |
-| `gnhf`                    | Resume a run (when on an existing gnhf/ branch) |
-| `echo "<prompt>" \| gnhf` | Pipe prompt via stdin                           |
-| `cat prd.md \| gnhf`      | Pipe a large spec or PRD via stdin              |
+| `gnpk "<prompt>"`         | Start a new run with the given objective        |
+| `gnpk`                    | Resume a run (when on an existing gnpk/ branch) |
+| `echo "<prompt>" \| gnpk` | Pipe prompt via stdin                           |
+| `cat prd.md \| gnpk`      | Pipe a large spec or PRD via stdin              |
 
-If you run `gnhf` on an existing `gnhf/` branch with a different prompt, gnhf asks whether to update `prompt.md` and continue the existing run history, start a new branch, or quit. When the prompt came from stdin, that confirmation is read from the controlling terminal, so it must be available.
+If you run `gnpk` on an existing `gnpk/` branch with a different prompt, gnpk asks whether to update `prompt.md` and continue the existing run history, start a new branch, or quit. When the prompt came from stdin, that confirmation is read from the controlling terminal, so it must be available.
 
 ### Flags
 
@@ -215,17 +224,18 @@ If you run `gnhf` on an existing `gnhf/` branch with a different prompt, gnhf as
 | `--max-rate-limit-wait <duration>` | Abort after this much total Claude usage-limit wait (`30m`, `2h`, or `0`)                          | 24h safety cap         |
 | `--stop-when <cond>`               | End when the agent reports this condition, after any commit-failure repair; persists across resume | unlimited              |
 | `--prevent-sleep <mode>`           | Prevent system sleep during the run (`on`/`off` or `true`/`false`)                                 | config file (`on`)     |
+| `--draft-pr`                      | Publish a completed worktree branch and create a draft GitHub PR when the base is unchanged | `false`                |
 | `--worktree`                       | Run in a separate git worktree (enables multiple agents concurrently)                              | `false`                |
-| `--current-branch`                 | Run on the current branch instead of creating a `gnhf/` branch                                     | `false`                |
+| `--current-branch`                 | Run on the current branch instead of creating a `gnpk/` branch                                     | `false`                |
 | `--push`                           | Push the current branch after each successful iteration                                            | `false`                |
 | `--meteor-frequency <n>`           | Set TUI meteor frequency from 0 to 5 (`0` disables meteors)                                        | `3`                    |
 | `--version`                        | Show version                                                                                       |                        |
 
 ## Configuration
 
-Config lives at `~/.gnhf/config.yml`.
-If the file does not exist yet, `gnhf` creates it on first run with its defaults.
-A supplied `--agent` is written as the default agent.
+Config lives at `~/.gnpk/config.yml`; if it does not exist, legacy `~/.gnhf/config.yml` remains supported.
+If the file does not exist yet, `gnpk` creates it on first run with its defaults.
+An explicit `--agent` selects the agent for that run.
 With the default configuration, it has this exact content:
 
 <!-- This block mirrors src/core/bootstrap-config.golden.yml and is pinned to it by src/core/bootstrap-config.test.ts; update both together. -->
@@ -284,7 +294,7 @@ agent: claude
 #   staging: "node /opt/staging/agent.mjs"
 
 # Commit message convention (optional)
-# Defaults to: gnhf <iteration>: <summary>
+# Defaults to: gnpk <iteration>: <summary>
 # Use Conventional Commits semantic-release headers:
 # commitMessage:
 #   preset: conventional
@@ -302,15 +312,15 @@ The iteration, token, and rate-limit-wait caps are runtime-only flags and are no
 `agentArgsOverride.<name>` lets you pass through extra CLI flags for any native agent in the [Agents](#agents) table.
 ACP targets do not support path or arg overrides in this version.
 Use `acpRegistryOverrides` to map `acp:<target>` names to custom spawn commands for local, forked, or beta ACP agents.
-You can also pass a raw custom ACP server command directly as a quoted `acp:` spec, for example `gnhf --agent 'acp:./bin/dev-acp --profile ci' "fix the tests"`.
+You can also pass a raw custom ACP server command directly as a quoted `acp:` spec, for example `gnpk --agent 'acp:./bin/dev-acp --profile ci' "fix the tests"`.
 
-- Use it for agent-specific profiles or reasoning settings that lack a dedicated `gnhf` config field. Set a model with `agentModel.<name>` in config or `--model <model>` for a run; `--model` wins. OpenCode requires a `provider/model` pair, and its `--model`/`-m` overrides are rejected because `opencode serve` does not accept them. Rovo Dev model overrides are unsupported; set `agent.modelId` in Rovo Dev settings instead.
-- For `codex`, `claude`, `copilot`, and `cursor`, `gnhf` adds its usual non-interactive permission default only when you do not provide your own permission or execution-mode flag. If you set one explicitly, `gnhf` treats that as user-managed and does not add its default on top.
-- Flags that `gnhf` manages itself for a given agent, such as output-shaping or local-server startup flags, are rejected during config loading so you get a clear error instead of duplicate-argument ambiguity. For `pi` and `cursor`, `--api-key` is also blocked; configure credentials via Pi's own config or the `CURSOR_API_KEY` environment variable, not via `agentArgsOverride`.
+- Use it for agent-specific profiles or reasoning settings that lack a dedicated `gnpk` config field. Set a model with `agentModel.<name>` in config or `--model <model>` for a run; `--model` wins. OpenCode requires a `provider/model` pair, and its `--model`/`-m` overrides are rejected because `opencode serve` does not accept them. Rovo Dev model overrides are unsupported; set `agent.modelId` in Rovo Dev settings instead.
+- For `codex`, `claude`, `copilot`, and `cursor`, `gnpk` adds its usual non-interactive permission default only when you do not provide your own permission or execution-mode flag. If you set one explicitly, `gnpk` treats that as user-managed and does not add its default on top.
+- Flags that `gnpk` manages itself for a given agent, such as output-shaping or local-server startup flags, are rejected during config loading so you get a clear error instead of duplicate-argument ambiguity. For `pi` and `cursor`, `--api-key` is also blocked; configure credentials via Pi's own config or the `CURSOR_API_KEY` environment variable, not via `agentArgsOverride`.
 
-`commitMessage` controls the subject line that gnhf uses for each successful iteration commit.
+`commitMessage` controls the subject line that gnpk uses for each successful iteration commit.
 
-- Omit it to keep the default `gnhf <iteration>: <summary>` format.
+- Omit it to keep the default `gnpk <iteration>: <summary>` format.
 - Set `preset: conventional` to ask the agent for `type` and optional `scope`, then commit as `type(scope): summary` for semantic-release style workflows. Valid types are `build`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `test`, and `chore`; invalid or missing types fall back to `chore`, and empty scopes are omitted.
 - The resolved commit-message convention is saved per run, so resuming keeps the original subject format even if `config.yml` changes later.
 
@@ -327,40 +337,40 @@ agentPathOverride:
   cursor: ~/bin/cursor-agent-wrapper
 ```
 
-Paths may be absolute, bare executable names already on your `PATH`, `~`-prefixed, or relative to the config directory (`~/.gnhf/`). The override replaces only the binary name; all standard arguments are preserved, so the replacement must be CLI-compatible with the original agent. On Windows, `.cmd` and `.bat` wrappers are supported, including bare names resolved from `PATH`. For `rovodev`, the override must point to an `acli`-compatible binary since gnhf invokes it as `<bin> rovodev serve ...`.
+Paths may be absolute, bare executable names already on your `PATH`, `~`-prefixed, or relative to the config directory (`~/.gnpk/`). The override replaces only the binary name; all standard arguments are preserved, so the replacement must be CLI-compatible with the original agent. On Windows, `.cmd` and `.bat` wrappers are supported, including bare names resolved from `PATH`. For `rovodev`, the override must point to an `acli`-compatible binary since gnpk invokes it as `<bin> rovodev serve ...`.
 
 ### Sleep Prevention
 
-When sleep prevention is enabled, `gnhf` uses the native mechanism for your OS: `caffeinate` on macOS, `systemd-inhibit` on Linux, and a small PowerShell helper backed by `SetThreadExecutionState` on Windows.
+When sleep prevention is enabled, `gnpk` uses the native mechanism for your OS: `caffeinate` on macOS, `systemd-inhibit` on Linux, and a small PowerShell helper backed by `SetThreadExecutionState` on Windows.
 A run is never aborted because that mechanism is unavailable; instead the exit summary adds a `sleep` line reporting either that prevention could not be started for the run, or that the helper started but never confirmed it was holding the machine awake, so the machine may have slept.
 
 ## Debug Logs
 
-Every run writes a JSONL debug log to `.gnhf/runs/<runId>/gnhf.log` alongside `notes.md`. Lifecycle events for the orchestrator, agent, and HTTP requests are captured with elapsed timings and (for failures) the full `error.cause` chain, which is what you need to tell a bare `TypeError: fetch failed` apart from an undici `UND_ERR_HEADERS_TIMEOUT`. The agent's own streaming output still goes to the per-iteration `iteration-<n>.jsonl` file next to it.
-Raw ACP command specs are redacted as `acp:custom`/`custom` in debug logs and related errors, so local paths or secrets in custom commands are not written to `gnhf.log`.
+Every run writes a JSONL debug log to `.gnpk/runs/<runId>/gnpk.log` alongside `notes.md`. Lifecycle events for the orchestrator, agent, and HTTP requests are captured with elapsed timings and (for failures) the full `error.cause` chain, which is what you need to tell a bare `TypeError: fetch failed` apart from an undici `UND_ERR_HEADERS_TIMEOUT`. The agent's own streaming output still goes to the per-iteration `iteration-<n>.jsonl` file next to it.
+Raw ACP command specs are redacted as `acp:custom`/`custom` in debug logs and related errors, so local paths or secrets in custom commands are not written to `gnpk.log`.
 
-Including a snippet of `gnhf.log` is the single most useful thing you can attach when filing an issue.
+Including a snippet of `gnpk.log` is the single most useful thing you can attach when filing an issue.
 
 ## Telemetry
 
-`gnhf` sends anonymous usage telemetry to my self-hosted analytics so I can see what's actually getting used.
+`gnpk` sends anonymous usage telemetry to my self-hosted analytics so I can see what's actually getting used.
 No prompts, repo paths, or branch names are sent.
-Set `GNHF_TELEMETRY=0` to turn it off.
+Set `GNPK_TELEMETRY=0` to turn it off.
 
 ## Agents
 
-`gnhf` supports seven native agents plus ACP targets. ACP support is powered by [`acpx`](https://github.com/openclaw/acpx), which is bundled with `gnhf` and provides the runtime and agent registry for `acp:<target-or-command>` specs.
+`gnpk` supports seven native agents plus ACP targets. ACP support is powered by [`acpx`](https://github.com/openclaw/acpx), which is bundled with `gnpk` and provides the runtime and agent registry for `acp:<target-or-command>` specs.
 
 | Agent              | Flag                              | Requirements                                                                                                                                                                                            | Notes                                                                                                                                                                                                                                                                                                                                                                                      |
 | ------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Claude Code        | `--agent claude`                  | Install Anthropic's `claude` CLI and sign in first.                                                                                                                                                     | `gnhf` invokes `claude` directly in non-interactive mode. After Claude emits a successful structured result, `gnhf` treats that result as final and shuts down any lingering Claude process tree after a short grace period.                                                                                                                                                               |
-| Codex              | `--agent codex`                   | Install OpenAI's `codex` CLI and sign in first.                                                                                                                                                         | `gnhf` invokes `codex exec` directly in non-interactive mode.                                                                                                                                                                                                                                                                                                                              |
-| GitHub Copilot CLI | `--agent copilot`                 | Install GitHub Copilot CLI and sign in first.                                                                                                                                                           | `gnhf` invokes `copilot` directly in non-interactive JSONL mode. Copilot currently exposes assistant output tokens, but not full input/cache token totals; see https://github.com/github/copilot-cli/issues/1152.                                                                                                                                                                          |
-| Pi                 | `--agent pi`                      | Install the `pi` CLI and configure a usable provider/model first.                                                                                                                                       | `gnhf` invokes `pi` directly in JSON mode, appends the final output schema to the prompt, and disables Pi session persistence with `--no-session`.                                                                                                                                                                                                                                         |
-| Cursor CLI         | `--agent cursor`                  | Install Cursor's CLI and sign in first (`cursor-agent login`).                                                                                                                                          | `gnhf` invokes `cursor-agent` (falling back to the `agent` name) directly in non-interactive `--print` stream-json mode, appends the final output schema to the prompt, and defaults to `--force`, `--trust`, and `--approve-mcps` unless you override those flags. After Cursor emits a non-error result, `gnhf` shuts down any lingering Cursor process tree after a short grace period. |
-| Rovo Dev           | `--agent rovodev`                 | Install Atlassian's `acli` and authenticate it with Rovo Dev first.                                                                                                                                     | `gnhf` starts a local `acli rovodev serve --disable-session-token <port>` process automatically in the repo workspace.                                                                                                                                                                                                                                                                     |
-| OpenCode           | `--agent opencode`                | Install `opencode` and configure at least one usable model provider first.                                                                                                                              | `gnhf` starts a local `opencode serve --hostname 127.0.0.1 --port <port> --print-logs` process automatically, creates a session for each iteration, and applies a blanket allow rule so tool calls do not block on prompts.                                                                                                                                                                |
-| ACP target         | `--agent acp:<target-or-command>` | Install and authenticate the target supported by the bundled [`acpx`](https://github.com/openclaw/acpx) registry, such as `acp:gemini` or `acp:grok-build`, or pass a quoted custom ACP server command. | `gnhf` runs the target through ACP with a persistent per-run session under `.gnhf/runs/<runId>/acp-sessions`; token usage and `--max-tokens` use ACP `used` deltas when available, with prompt-length plus tool-call estimates as a fallback, and `agentPathOverride` and `agentArgsOverride` do not apply.                                                                                |
+| Claude Code        | `--agent claude`                  | Install Anthropic's `claude` CLI and sign in first.                                                                                                                                                     | `gnpk` invokes `claude` directly in non-interactive mode. After Claude emits a successful structured result, `gnpk` treats that result as final and shuts down any lingering Claude process tree after a short grace period.                                                                                                                                                               |
+| Codex              | `--agent codex`                   | Install OpenAI's `codex` CLI and sign in first.                                                                                                                                                         | `gnpk` invokes `codex exec` directly in non-interactive mode.                                                                                                                                                                                                                                                                                                                              |
+| GitHub Copilot CLI | `--agent copilot`                 | Install GitHub Copilot CLI and sign in first.                                                                                                                                                           | `gnpk` invokes `copilot` directly in non-interactive JSONL mode. Copilot currently exposes assistant output tokens, but not full input/cache token totals; see https://github.com/github/copilot-cli/issues/1152.                                                                                                                                                                          |
+| Pi                 | `--agent pi`                      | Install the `pi` CLI and configure a usable provider/model first.                                                                                                                                       | `gnpk` invokes `pi` directly in JSON mode, appends the final output schema to the prompt, and disables Pi session persistence with `--no-session`.                                                                                                                                                                                                                                         |
+| Cursor CLI         | `--agent cursor`                  | Install Cursor's CLI and sign in first (`cursor-agent login`).                                                                                                                                          | `gnpk` invokes `cursor-agent` (falling back to the `agent` name) directly in non-interactive `--print` stream-json mode, appends the final output schema to the prompt, and defaults to `--force`, `--trust`, and `--approve-mcps` unless you override those flags. After Cursor emits a non-error result, `gnpk` shuts down any lingering Cursor process tree after a short grace period. |
+| Rovo Dev           | `--agent rovodev`                 | Install Atlassian's `acli` and authenticate it with Rovo Dev first.                                                                                                                                     | `gnpk` starts a local `acli rovodev serve --disable-session-token <port>` process automatically in the repo workspace.                                                                                                                                                                                                                                                                     |
+| OpenCode           | `--agent opencode`                | Install `opencode` and configure at least one usable model provider first.                                                                                                                              | `gnpk` starts a local `opencode serve --hostname 127.0.0.1 --port <port> --print-logs` process automatically, creates a session for each iteration, and applies a blanket allow rule so tool calls do not block on prompts.                                                                                                                                                                |
+| ACP target         | `--agent acp:<target-or-command>` | Install and authenticate the target supported by the bundled [`acpx`](https://github.com/openclaw/acpx) registry, such as `acp:gemini` or `acp:grok-build`, or pass a quoted custom ACP server command. | `gnpk` runs the target through ACP with a persistent per-run session under `.gnpk/runs/<runId>/acp-sessions`; token usage and `--max-tokens` use ACP `used` deltas when available, with prompt-length plus tool-call estimates as a fallback, and `agentPathOverride` and `agentArgsOverride` do not apply.                                                                                |
 
 ## Development
 
@@ -368,10 +378,10 @@ If you want to contribute changes back to this repo, see [`CONTRIBUTING.md`](./C
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=kunchenguid%2Fgnhf&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=kunchenguid%2Fgnpk&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=kunchenguid/gnhf&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=kunchenguid/gnhf&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=kunchenguid/gnhf&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=kingkillery/gnpk&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=kingkillery/gnpk&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=kingkillery/gnpk&type=date&legend=top-left" />
  </picture>
 </a>

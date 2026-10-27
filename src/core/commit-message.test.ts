@@ -24,7 +24,7 @@ describe("buildCommitMessage", () => {
       { iteration: 3 },
     );
 
-    expect(message).toBe("gnhf 3: add retry coverage");
+    expect(message).toBe("gnpk 3: add retry coverage");
   });
 
   it("renders a Conventional Commits header with a scope", () => {

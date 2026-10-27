@@ -1,0 +1,16 @@
+{
+  "name": "@local/gnhf-herdr-launcher",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local Windows GNHF launchers for PK-Herdr",
+  "bin": {
+    "gnpk": "./parallel.mjs",
+    "gnpk-parallel": "./parallel.mjs",
+    "gnhf": "./entry.mjs",
+    "gnhf-parallel": "./parallel.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

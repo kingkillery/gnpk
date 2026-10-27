@@ -441,12 +441,12 @@ describe("git utilities", () => {
 
   describe("createWorktree", () => {
     it("passes the branch name and path as distinct argv entries", () => {
-      createWorktree("/repo", "/tmp/wt", "gnhf/my-branch");
+      createWorktree("/repo", "/tmp/wt", "gnpk/my-branch");
       expect(argsOfCall(0)).toEqual([
         "worktree",
         "add",
         "-b",
-        "gnhf/my-branch",
+        "gnpk/my-branch",
         "/tmp/wt",
       ]);
     });
@@ -472,13 +472,13 @@ describe("git utilities", () => {
           "HEAD abc123",
           "branch refs/heads/main",
           "",
-          "worktree /tmp/repo-gnhf-worktrees/xyz",
+          "worktree /tmp/repo-gnpk-worktrees/xyz",
           "HEAD def456",
-          "branch refs/heads/gnhf/xyz",
+          "branch refs/heads/gnpk/xyz",
           "",
         ].join("\n"),
       );
-      expect(worktreeExists("/tmp/repo", "/tmp/repo-gnhf-worktrees/xyz")).toBe(
+      expect(worktreeExists("/tmp/repo", "/tmp/repo-gnpk-worktrees/xyz")).toBe(
         true,
       );
     });
@@ -492,7 +492,7 @@ describe("git utilities", () => {
           "",
         ].join("\n"),
       );
-      expect(worktreeExists("/tmp/repo", "/tmp/repo-gnhf-worktrees/xyz")).toBe(
+      expect(worktreeExists("/tmp/repo", "/tmp/repo-gnpk-worktrees/xyz")).toBe(
         false,
       );
     });
@@ -500,14 +500,14 @@ describe("git utilities", () => {
     it("normalizes paths before comparing so trailing slashes and traversal segments still match", () => {
       mockExecFileSync.mockReturnValue(
         [
-          "worktree /tmp/repo-gnhf-worktrees/xyz",
+          "worktree /tmp/repo-gnpk-worktrees/xyz",
           "HEAD def456",
-          "branch refs/heads/gnhf/xyz",
+          "branch refs/heads/gnpk/xyz",
           "",
         ].join("\n"),
       );
       expect(
-        worktreeExists("/tmp/repo", "/tmp/repo-gnhf-worktrees/other/../xyz/"),
+        worktreeExists("/tmp/repo", "/tmp/repo-gnpk-worktrees/other/../xyz/"),
       ).toBe(true);
     });
 

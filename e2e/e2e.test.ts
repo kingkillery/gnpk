@@ -69,12 +69,12 @@ function readJsonLines(filePath: string): Record<string, unknown>[] {
 }
 
 /**
- * Locate the gnhf.log file that the run wrote inside the repo. gnhf always
- * writes to `<cwd>/.gnhf/runs/<runId>/gnhf.log`, and each test creates a
+ * Locate the gnpk.log file that the run wrote inside the repo. gnhf always
+ * writes to `<cwd>/.gnpk/runs/<runId>/gnpk.log`, and each test creates a
  * fresh repo, so there's exactly one run dir.
  */
 function findRunLogPath(cwd: string): string {
-  const runsDir = join(cwd, ".gnhf", "runs");
+  const runsDir = join(cwd, ".gnpk", "runs");
   if (!existsSync(runsDir)) {
     throw new Error(`No run directory found under ${runsDir}`);
   }
@@ -91,7 +91,7 @@ function findRunLogPath(cwd: string): string {
       `Expected exactly one run in ${runsDir}, found ${runs.length}: ${runs.join(", ")}`,
     );
   }
-  return join(runsDir, runs[0]!, "gnhf.log");
+  return join(runsDir, runs[0]!, "gnpk.log");
 }
 
 async function waitForLogEvent(
@@ -131,12 +131,12 @@ async function waitForRunLogPath(
   timeoutMs = 15_000,
 ): Promise<string> {
   const deadline = Date.now() + timeoutMs;
-  const runsDir = join(cwd, ".gnhf", "runs");
+  const runsDir = join(cwd, ".gnpk", "runs");
 
   while (Date.now() < deadline) {
     if (existsSync(runsDir)) {
       const runs = readdirSync(runsDir);
-      if (runs.length === 1) return join(runsDir, runs[0]!, "gnhf.log");
+      if (runs.length === 1) return join(runsDir, runs[0]!, "gnpk.log");
     }
     await new Promise((resolveDelay) => setTimeout(resolveDelay, 50));
   }
@@ -261,7 +261,7 @@ describe("gnhf e2e", () => {
     );
 
     expect(result.code).toBe(0);
-    expect(result.stdout).toContain("gnhf stopped");
+    expect(result.stdout).toContain("gnpk stopped");
     expect(result.stdout).toContain("opencode ran");
     expect(result.stdout).toContain("max iterations reached (1)");
     expect(result.stdout).toContain("branch diff");
@@ -696,8 +696,8 @@ describe("gnhf e2e", () => {
 
     expect(result.code).toBe(0);
     // The permanent stdout summary is what the user reads in the morning, so
-    // the reason gnhf stopped spending has to be in it.
-    expect(result.stdout).toContain("gnhf stopped");
+    // the reason gnpk stopped spending has to be in it.
+    expect(result.stdout).toContain("gnpk stopped");
     expect(result.stdout).toContain(
       "extra usage engaged but no reset time was reported",
     );
@@ -836,7 +836,7 @@ describe("gnhf e2e", () => {
           runLogPath,
           (entry) => entry.event === "agent:run:start" && entry.iteration === 2,
         );
-        const runsDir = join(cwd, ".gnhf", "runs");
+        const runsDir = join(cwd, ".gnpk", "runs");
         const runId = readdirSync(runsDir)[0]!;
         expect(existsSync(join(runsDir, runId, "iteration-2.jsonl"))).toBe(
           true,
@@ -884,7 +884,7 @@ describe("gnhf e2e", () => {
       const logDir = mkdtempSync(join(tmpdir(), "gnhf-e2e-logs-"));
       tempDirs.push(logDir);
       const mockLogPath = join(logDir, "mock-opencode.jsonl");
-      const worktreeParent = `${cwd}-gnhf-worktrees`;
+      const worktreeParent = `${cwd}-gnpk-worktrees`;
       tempDirs.push(worktreeParent);
 
       const result = await runCli(
@@ -914,9 +914,9 @@ describe("gnhf e2e", () => {
       expect(worktreeDirs.length).toBe(1);
       const worktreePath = join(worktreeParent, worktreeDirs[0]!);
 
-      // The worktree should be on a gnhf/* branch with the agent's commit
+      // The worktree should be on a gnpk/* branch with the agent's commit
       const wtBranch = git(["rev-parse", "--abbrev-ref", "HEAD"], worktreePath);
-      expect(wtBranch).toMatch(/^gnhf\//);
+      expect(wtBranch).toMatch(/^gnpk\//);
       const wtCommitCount = git(["rev-list", "--count", "HEAD"], worktreePath);
       expect(Number(wtCommitCount)).toBeGreaterThanOrEqual(2); // init + agent commit
 
@@ -928,10 +928,10 @@ describe("gnhf e2e", () => {
       // Debug log should record worktree info
       const debugLogPath = join(
         worktreePath,
-        ".gnhf",
+        ".gnpk",
         "runs",
         worktreeDirs[0]!,
-        "gnhf.log",
+        "gnpk.log",
       );
       const debugEvents = readJsonLines(debugLogPath);
       const startEvent = debugEvents.find((e) => e.event === "run:start");
@@ -952,7 +952,7 @@ describe("gnhf e2e", () => {
       const logDir = mkdtempSync(join(tmpdir(), "gnhf-e2e-logs-"));
       tempDirs.push(logDir);
       const mockLogPath = join(logDir, "mock-opencode.jsonl");
-      const worktreeParent = `${cwd}-gnhf-worktrees`;
+      const worktreeParent = `${cwd}-gnpk-worktrees`;
       tempDirs.push(worktreeParent);
       const fakeBinDir = mkdtempSync(join(tmpdir(), "gnhf-e2e-bin-"));
       tempDirs.push(fakeBinDir);
@@ -1002,8 +1002,8 @@ describe("gnhf e2e", () => {
       expect(worktreeDirs).toHaveLength(1);
       const runId = worktreeDirs[0]!;
       const worktreePath = join(worktreeParent, runId);
-      const runDir = join(worktreePath, ".gnhf", "runs", runId);
-      const logFilePath = join(runDir, "gnhf.log");
+      const runDir = join(worktreePath, ".gnpk", "runs", runId);
+      const logFilePath = join(runDir, "gnpk.log");
       expect(existsSync(join(runDir, "notes.md"))).toBe(true);
       expect(existsSync(logFilePath)).toBe(true);
 
@@ -1022,7 +1022,7 @@ describe("gnhf e2e", () => {
 
       // The committed work itself survived, not just the run metadata.
       expect(git(["rev-parse", "--abbrev-ref", "HEAD"], worktreePath)).toMatch(
-        /^gnhf\//,
+        /^gnpk\//,
       );
       expect(git(["rev-list", "--count", "HEAD"], worktreePath)).toBe("2");
       expect(git(["log", "-1", "--format=%s"], worktreePath)).toContain(
@@ -1040,7 +1040,7 @@ describe("gnhf e2e", () => {
       const logDir = mkdtempSync(join(tmpdir(), "gnhf-e2e-logs-"));
       tempDirs.push(logDir);
       const mockLogPath = join(logDir, "mock-opencode.jsonl");
-      const worktreeParent = `${cwd}-gnhf-worktrees`;
+      const worktreeParent = `${cwd}-gnpk-worktrees`;
       tempDirs.push(worktreeParent);
 
       const env = createTestEnv(mockLogPath, tempDirs);
@@ -1104,7 +1104,7 @@ describe("gnhf e2e", () => {
       const logDir = mkdtempSync(join(tmpdir(), "gnhf-e2e-logs-"));
       tempDirs.push(logDir);
       const mockLogPath = join(logDir, "mock-opencode.jsonl");
-      const worktreeParent = `${cwd}-gnhf-worktrees`;
+      const worktreeParent = `${cwd}-gnpk-worktrees`;
       tempDirs.push(worktreeParent);
 
       const env = createTestEnv(mockLogPath, tempDirs);
@@ -1143,7 +1143,7 @@ describe("gnhf e2e", () => {
       );
       expect(second.code).not.toBe(0);
       expect(second.stderr).toContain("rather than");
-      expect(second.stderr).toMatch(/gnhf\//);
+      expect(second.stderr).toMatch(/gnpk\//);
       expect(second.stderr).toContain("sideways");
     },
     60_000,
@@ -1157,7 +1157,7 @@ describe("gnhf e2e", () => {
       const logDir = mkdtempSync(join(tmpdir(), "gnhf-e2e-logs-"));
       tempDirs.push(logDir);
       const mockLogPath = join(logDir, "mock-opencode.jsonl");
-      const worktreeParent = `${cwd}-gnhf-worktrees`;
+      const worktreeParent = `${cwd}-gnpk-worktrees`;
       // Register for cleanup in case test fails and worktree isn't removed
       tempDirs.push(worktreeParent);
 

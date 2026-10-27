@@ -5,7 +5,7 @@ minimumReleaseAge: 10080
 minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
   - acp-mock
-  - gnhf
+  - gnpk
 onlyBuiltDependencies:
   - esbuild
 allowBuilds:

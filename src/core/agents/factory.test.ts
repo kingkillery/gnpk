@@ -105,16 +105,16 @@ import type { RunInfo } from "../run.js";
 
 const stubRunInfo: RunInfo = {
   runId: "test-run",
-  runDir: "/repo/.gnhf/runs/test-run",
-  promptPath: "/repo/.gnhf/runs/test-run/PROMPT.md",
-  notesPath: "/repo/.gnhf/runs/test-run/notes.md",
-  schemaPath: "/repo/.gnhf/runs/test-run/schema.json",
-  logPath: "/repo/.gnhf/runs/test-run/gnhf.log",
+  runDir: "/repo/.gnpk/runs/test-run",
+  promptPath: "/repo/.gnpk/runs/test-run/PROMPT.md",
+  notesPath: "/repo/.gnpk/runs/test-run/notes.md",
+  schemaPath: "/repo/.gnpk/runs/test-run/schema.json",
+  logPath: "/repo/.gnpk/runs/test-run/gnpk.log",
   baseCommit: "abc123",
-  baseCommitPath: "/repo/.gnhf/runs/test-run/base-commit",
-  stopWhenPath: "/repo/.gnhf/runs/test-run/stop-when",
+  baseCommitPath: "/repo/.gnpk/runs/test-run/base-commit",
+  stopWhenPath: "/repo/.gnpk/runs/test-run/stop-when",
   stopWhen: undefined,
-  commitMessagePath: "/repo/.gnhf/runs/test-run/commit-message",
+  commitMessagePath: "/repo/.gnpk/runs/test-run/commit-message",
   commitMessage: undefined,
 };
 

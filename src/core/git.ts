@@ -65,7 +65,7 @@ export class CommitFailedError extends Error {
 function git(
   args: string[],
   cwd: string,
-  options: { env?: NodeJS.ProcessEnv } = {},
+  options: { env?: NodeJS.ProcessEnv; timeout?: number } = {},
 ): string {
   const baseEnv = options.env ?? process.env;
   const env: NodeJS.ProcessEnv = { ...baseEnv, GIT_TERMINAL_PROMPT: "0" };
@@ -75,10 +75,16 @@ function git(
       encoding: "utf-8",
       stdio: "pipe",
       env,
+      ...(options.timeout === undefined ? {} : { timeout: options.timeout }),
     }).trim();
   } catch (error) {
     throw translateGitError(error);
   }
+}
+
+/** Bounded, argument-safe git access for the optional draft-PR workflow. */
+export function gitForDraftPr(args: string[], cwd: string): string {
+  return git(args, cwd, { timeout: 60_000 });
 }
 
 function isGitRepository(cwd: string): boolean {

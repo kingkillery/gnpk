@@ -624,7 +624,7 @@ describe("startSleepPrevention", () => {
 
   it("records the Windows helper's stderr when it exits before reporting ready", async () => {
     const tempDir = mkdtempSync(join(tmpdir(), "gnhf-sleep-"));
-    const logPath = join(tempDir, "gnhf.log");
+    const logPath = join(tempDir, "gnpk.log");
     initDebugLog(logPath);
 
     const child = createWindowsChildProcess();
@@ -675,7 +675,7 @@ describe("startSleepPrevention", () => {
   it("reports the Windows helper as unconfirmed when it never reports ready", async () => {
     vi.useFakeTimers();
     const tempDir = mkdtempSync(join(tmpdir(), "gnhf-sleep-"));
-    const logPath = join(tempDir, "gnhf.log");
+    const logPath = join(tempDir, "gnpk.log");
     initDebugLog(logPath);
 
     const child = createWindowsChildProcess();

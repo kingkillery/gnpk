@@ -10,5 +10,5 @@ export function slugifyPrompt(prompt: string): string {
 
   const hash = createHash("sha256").update(prompt).digest("hex").slice(0, 6);
 
-  return `gnhf/${slug}-${hash}`;
+  return `gnpk/${slug}-${hash}`;
 }

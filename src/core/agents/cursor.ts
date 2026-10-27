@@ -220,7 +220,7 @@ function userSpecifiedApproveMcps(userArgs: string[]): boolean {
 function buildCursorPrompt(prompt: string, schema: AgentOutputSchema): string {
   return `${prompt}
 
-## gnhf final output contract
+## gnpk final output contract
 
 When the iteration is complete, your final answer must be a single JSON object that matches this JSON Schema:
 

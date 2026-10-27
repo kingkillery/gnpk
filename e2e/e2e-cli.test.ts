@@ -100,8 +100,8 @@ function createHomeWithConfig(
   configYaml: string,
 ): NodeJS.ProcessEnv {
   const home = temp.mkdir("home");
-  mkdirSync(join(home, ".gnhf"), { recursive: true });
-  writeFileSync(join(home, ".gnhf", "config.yml"), configYaml, "utf-8");
+  mkdirSync(join(home, ".gnpk"), { recursive: true });
+  writeFileSync(join(home, ".gnpk", "config.yml"), configYaml, "utf-8");
   return { ...process.env, HOME: home, USERPROFILE: home };
 }
 
@@ -110,8 +110,8 @@ function createMockOpencodeEnv(
   configYaml: string,
 ): { env: NodeJS.ProcessEnv; mockLogPath: string } {
   const home = temp.mkdir("home");
-  mkdirSync(join(home, ".gnhf"), { recursive: true });
-  writeFileSync(join(home, ".gnhf", "config.yml"), configYaml, "utf-8");
+  mkdirSync(join(home, ".gnpk"), { recursive: true });
+  writeFileSync(join(home, ".gnpk", "config.yml"), configYaml, "utf-8");
   const logDir = temp.mkdir("logs");
   const mockLogPath = join(logDir, "mock-opencode.jsonl");
   return {
@@ -135,7 +135,7 @@ async function withTemp<T>(fn: (temp: TempCleanup) => Promise<T>): Promise<T> {
   }
 }
 
-describe.concurrent("gnhf e2e cli", () => {
+describe("gnpk e2e cli", () => {
   it("prints the package version for -V", async () => {
     await withTemp(async (temp) => {
       const cwd = temp.mkdir("version");
@@ -155,7 +155,7 @@ describe.concurrent("gnhf e2e cli", () => {
 
       expect(result.code).not.toBe(0);
       expect(result.stderr).toContain(
-        'gnhf: This command must be run inside a Git repository. Change into a repo or run "git init" first.',
+        'gnpk: This command must be run inside a Git repository. Change into a repo or run "git init" first.',
       );
     });
   }, 15_000);
@@ -185,7 +185,7 @@ describe.concurrent("gnhf e2e cli", () => {
       );
 
       expect(result.code).toBe(0);
-      expect(readFileSync(join(home, ".gnhf", "config.yml"), "utf-8")).toBe(
+      expect(readFileSync(join(home, ".gnpk", "config.yml"), "utf-8")).toBe(
         bootstrapConfigGolden,
       );
     });
@@ -194,7 +194,7 @@ describe.concurrent("gnhf e2e cli", () => {
   it("exits with error when --worktree is used from a gnhf branch", async () => {
     await withTemp(async (temp) => {
       const cwd = createRepo(temp);
-      git(["checkout", "-b", "gnhf/existing-run"], cwd);
+      git(["checkout", "-b", "gnpk/existing-run"], cwd);
 
       const result = await runCli(cwd, [
         "new objective",
@@ -205,7 +205,7 @@ describe.concurrent("gnhf e2e cli", () => {
 
       expect(result.code).not.toBe(0);
       expect(result.stderr).toContain(
-        "Cannot use --worktree from a gnhf branch",
+        "Cannot use --worktree from a gnpk or legacy gnhf branch",
       );
     });
   }, 15_000);
@@ -329,17 +329,17 @@ describe.concurrent("gnhf e2e cli", () => {
     {
       label: "agentArgsOverride.codex: gnhf-managed flag",
       yaml: "agentArgsOverride:\n  codex:\n    - --output-schema=custom.json\n",
-      expected: "managed by gnhf",
+      expected: "managed by gnpk",
     },
     {
       label: "agentArgsOverride.rovodev: gnhf-managed flag",
       yaml: "agentArgsOverride:\n  rovodev:\n    - serve\n",
-      expected: "managed by gnhf",
+      expected: "managed by gnpk",
     },
     {
       label: "agentArgsOverride.copilot: gnhf-managed flag",
       yaml: "agentArgsOverride:\n  copilot:\n    - --output-format=json\n",
-      expected: "managed by gnhf",
+      expected: "managed by gnpk",
     },
   ])(
     "rejects invalid config: $label",

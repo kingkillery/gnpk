@@ -1,17 +1,17 @@
 ---
-name: gnhf
-description: Use when the user asks to run GNHF, says they are going to sleep or leaving and wants an agent-managed coding run, asks to supervise, steer, or review an active GNHF run, or gives feedback on GNHF results.
+name: gnpk
+description: Use when the user asks to run GNPK, says they are going to sleep or leaving and wants an agent-managed coding run, asks to supervise, steer, or review an active GNPK run, or gives feedback on GNPK results.
 ---
 
-# GNHF
+# GNPK
 
 ## Overview
 
-GNHF is an agent orchestrator: it repeatedly calls another coding agent until a natural-language stop condition is met. This skill teaches the host agent to prepare one durable run and, in Companion mode, steer or review it.
+GNPK is an agent orchestrator: it repeatedly calls another coding agent until a natural-language stop condition is met. This skill teaches the host agent to prepare one durable run and, in Companion mode, steer or review it.
 
-Core rule: the host agent orchestrates; GNHF executes. Do not manually implement inside the same scope while a GNHF worker is responsible for it unless the user explicitly changes the delegation.
+Core rule: the host agent orchestrates; GNPK executes. Do not manually implement inside the same scope while a GNPK worker is responsible for it unless the user explicitly changes the delegation.
 
-In Companion mode, GNHF completion is not user acceptance. "Stop condition met" only means the worker stopped; the host still compares the result to the user's latest requirements and fresh verification.
+In Companion mode, GNPK completion is not user acceptance. "Stop condition met" only means the worker stopped; the host still compares the result to the user's latest requirements and fresh verification.
 
 ## Modes
 
@@ -22,14 +22,14 @@ Choose exactly one mode for the run.
 Use when the task is bounded, verification is clear, and the user wants one configured run to proceed without steering.
 
 - Prepare a precise prompt with constraints, non-goals, verification, and stop condition.
-- Launch GNHF and wait for completion.
+- Launch GNPK and wait for completion.
 - Intervene early only for hard failure, runaway scope, destructive behavior, or impossible prerequisites.
-- Report the final GNHF status after exit.
+- Report the final GNPK status after exit.
 
 Examples:
 
-- English: "I'm going to bed. Use GNHF with Copilot to keep working on this branch and stop when the test suite passes."
-- Chinese: "我要睡了。用 GNHF 接着跑这个分支，测试都过了就停。"
+- English: "I'm going to bed. Use GNPK with Copilot to keep working on this branch and stop when the test suite passes."
+- Chinese: "我要睡了。用 GNPK 接着跑这个分支，测试都过了就停。"
 
 ### Companion
 
@@ -38,28 +38,28 @@ Use when the task is uncertain, exploratory, design-heavy, research-heavy, or li
 Default to Companion when the user asks to iterate until satisfied, requests multi-round work, provides review findings, asks for design/skill/documentation improvement, or asks for supervision.
 
 - Keep a note of original intent, branch, session id, and last known result.
-- Poll the active GNHF process until exit or until an intervention point appears.
+- Poll the active GNPK process until exit or until an intervention point appears.
 - Intervene when the worker optimizes the wrong thing, repeats failed fixes, skips requested research, drifts scope, or claims success without evidence.
 - Treat review findings as the next acceptance criteria.
-- Prefer a new bounded GNHF prompt over manually taking over implementation.
+- Prefer a new bounded GNPK prompt over manually taking over implementation.
 
 Examples:
 
-- English: "Run GNHF for a few rounds on this onboarding flow. Check the diff between rounds and tighten the next prompt if it starts polishing the wrong thing."
-- Chinese: "用 GNHF 多跑几轮这个 onboarding 流程。每轮看一下 diff，如果它开始改偏了，就收窄下一轮 prompt。"
+- English: "Run GNPK for a few rounds on this onboarding flow. Check the diff between rounds and tighten the next prompt if it starts polishing the wrong thing."
+- Chinese: "用 GNPK 多跑几轮这个 onboarding 流程。每轮看一下 diff，如果它开始改偏了，就收窄下一轮 prompt。"
 
 ## Launch
 
 Check the installed CLI before relying on flags:
 
 ```bash
-gnhf --help
+gnpk --help
 ```
 
 Known shape:
 
 ```bash
-gnhf \
+gnpk \
   --agent <agent> \
   --max-iterations <n> \
   --stop-when "<observable completion condition>" \
@@ -82,7 +82,7 @@ Prompt skeleton:
 ```text
 Objective: <one concrete outcome>.
 
-Use <agent/model requirement>. Work in this repo. Treat this as a long-running GNHF task.
+Use <agent/model requirement>. Work in this repo. Treat this as a long-running GNPK task.
 
 Before coding, inspect the current repo, relevant docs, and recent commits. Preserve user changes. Do not make unrelated refactors.
 
@@ -121,10 +121,10 @@ Stop only when <observable condition>.
 Use only in Companion mode, when the host is supervising quality or deciding whether to continue with another bounded run.
 
 1. Inspect branch, status, commits, changed files, and diff.
-2. Read GNHF notes/logs as claims, not evidence.
+2. Read GNPK notes/logs as claims, not evidence.
 3. Run independent verification: tests, lint, build, typecheck, manual QA, or domain-specific checks.
 4. Compare the result to the stop condition and the user's latest feedback.
-5. Decide: **Mergeable**, **Needs follow-up GNHF run**, or **Do not merge**.
+5. Decide: **Mergeable**, **Needs follow-up GNPK run**, or **Do not merge**.
 
 If the result needs follow-up, continue in Companion mode instead of presenting the run as complete. Do not merge unless explicitly authorized.
 
@@ -141,7 +141,7 @@ Use when the user provides findings such as "not preserved", "scope drift", "mis
 
 ## Morning Review
 
-Use when the user returns with "good morning", "how did last night's run go?", or similar after a GNHF run.
+Use when the user returns with "good morning", "how did last night's run go?", or similar after a GNPK run.
 
 Do not ask what to review first. Reconstruct state:
 
@@ -149,25 +149,25 @@ Do not ask what to review first. Reconstruct state:
 git status --short
 git branch --show-current
 git log --oneline --decorate --max-count=20
-pgrep -fl 'gnhf|claude|codex|copilot|cursor-agent|opencode|rovodev' || true
+pgrep -fl 'gnpk|claude|codex|copilot|cursor-agent|opencode|rovodev' || true
 ```
 
-Inspect likely GNHF branches, notes, logs, terminal sessions, and changed files. If a GNHF process is still running, report that first.
+Inspect likely GNPK branches, notes, logs, terminal sessions, and changed files. If a GNPK process is still running, report that first.
 
 Report mode, agent, branch, status, changes, verification, stop-condition result, quality assessment, and recommended next action. Never summarize an overnight run from memory.
 
 ## Agent
 
-The supported `--agent` roster comes from `gnhf --help`; the [Agents table](../../README.md#agents) in the GNHF README owns per-agent requirements. Do not hard-code the roster.
+The supported `--agent` roster comes from `gnpk --help`; the [Agents table](../../README.md#agents) in the GNPK README owns per-agent requirements. Do not hard-code the roster.
 
 - Default to the agent the user explicitly requested, or the one already configured and authenticated locally.
 - `codex`: repo-aware code work or review-heavy tasks.
 - `claude`: reasoning-heavy implementation or prose-heavy planning when configured.
-- `acp:<target>`: when the user wants to drive a custom ACP-compatible agent through GNHF.
+- `acp:<target>`: when the user wants to drive a custom ACP-compatible agent through GNPK.
 
 ## Safety
 
-- Preserve user changes. Never run destructive git commands to clean up a GNHF branch.
+- Preserve user changes. Never run destructive git commands to clean up a GNPK branch.
 - In Companion mode, do not trust a worker's success summary without fresh verification.
 - Keep prompts outcome-based and evidence-based.
 - Use concrete stop conditions. Bad: "looks good". Good: "the target workflow succeeds, relevant checks pass, and no unrelated files changed."

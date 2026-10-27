@@ -47,7 +47,7 @@ describe("CopilotAgent", () => {
     });
     expect(args[0]).toBe("-p");
     expect(args[1]).toContain("test prompt");
-    expect(args[1]).toContain("gnhf final output contract");
+    expect(args[1]).toContain("gnpk final output contract");
     expect(args).toEqual(
       expect.arrayContaining([
         "--output-format",

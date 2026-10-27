@@ -17,7 +17,7 @@ declare const __GNHF_UMAMI_WEBSITE_ID__: string;
 const HARDCODED_FALLBACK_HOST = "https://a.kunchenguid.com";
 const UMAMI_PATH = "/api/send";
 const DEFAULT_HOSTNAME = "cli";
-const DEFAULT_TITLE = "gnhf CLI";
+const DEFAULT_TITLE = "gnpk CLI";
 const DEFAULT_REQUEST_TIMEOUT_MS = 1_000;
 
 export type TelemetryFields = Record<string, unknown>;
@@ -55,20 +55,20 @@ interface ResolveInput {
 export function resolveTelemetryConfig(
   input: ResolveInput,
 ): ResolvedTelemetryConfig {
-  const optOut = (input.env.GNHF_TELEMETRY ?? "").trim().toLowerCase();
+  const optOut = (input.env.GNPK_TELEMETRY ?? input.env.GNHF_TELEMETRY ?? "").trim().toLowerCase();
   if (optOut === "0" || optOut === "false" || optOut === "off") {
     return { enabled: false, host: "", websiteID: "" };
   }
 
   const websiteID =
-    (input.env.GNHF_UMAMI_WEBSITE_ID ?? "").trim() ||
+    (input.env.GNPK_UMAMI_WEBSITE_ID ?? input.env.GNHF_UMAMI_WEBSITE_ID ?? "").trim() ||
     input.buildWebsiteID.trim();
   if (!websiteID) {
     return { enabled: false, host: "", websiteID: "" };
   }
 
   const host =
-    (input.env.GNHF_UMAMI_HOST ?? "").trim() ||
+    (input.env.GNPK_UMAMI_HOST ?? input.env.GNHF_UMAMI_HOST ?? "").trim() ||
     input.buildHost.trim() ||
     HARDCODED_FALLBACK_HOST;
 
